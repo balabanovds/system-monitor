@@ -25,7 +25,7 @@ func TestStorage_Get(t *testing.T) {
 	}
 
 	m3 := models.Metric{
-		Time: now.Add(time.Second),
+		Time: now.Add(3 * time.Second),
 		Type: models.LoadAverage15Min,
 	}
 
@@ -33,9 +33,8 @@ func TestStorage_Get(t *testing.T) {
 	st.Save(m2)
 	st.Save(m3)
 
-	mmap := st.Get(now.Add(3*time.Second), time.Minute)
+	mmap := st.Get(now.Add(time.Second), time.Minute)
 	require.Len(t, mmap, 2)
-	require.Len(t, mmap[models.LoadAverage15Min], 2)
 }
 
 func TestSTorage_Delete(t *testing.T) {
@@ -65,5 +64,4 @@ func TestSTorage_Delete(t *testing.T) {
 
 	mmap := st.Get(now.Add(3*time.Second), time.Minute)
 	require.Len(t, mmap, 1)
-	require.Len(t, mmap[models.LoadAverage15Min], 1)
 }

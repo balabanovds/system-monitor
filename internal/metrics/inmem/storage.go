@@ -30,9 +30,7 @@ func (s *storage) Get(end time.Time, duration time.Duration) []models.Metric {
 	for k, v := range s.data {
 		if k.UTC().UnixNano() > start.UTC().UnixNano() &&
 			k.UTC().UnixNano() < end.UTC().UnixNano() {
-			for _, m := range v {
-				result = append(result, m)
-			}
+			result = append(result, v...)
 		}
 	}
 

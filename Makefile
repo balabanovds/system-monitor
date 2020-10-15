@@ -7,7 +7,9 @@ test-linux:
 test-darwin:
 	go test -race -count 100 ./...
 
-test: lint test-linux test-darwin
+test: lint 
+	go test -race -count 100 ./...
 
 generate:
-	protoc -I=../schema --go_out=plugins=grpc:./internal/api/ ../schema/metric_service.proto
+	protoc -I=./schema --go_out=plugins=grpc:./internal/api/ ./schema/metric_service.proto
+	cd client && ./generate.sh && cd ..

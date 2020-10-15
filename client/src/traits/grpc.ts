@@ -47,9 +47,9 @@ export class GrpcMetricClient {
       host: this.addr,
     });
 
-    this.streamClient.onHeaders((headers) => {
-      console.log("headers", headers);
-    });
+    // this.streamClient.onHeaders((headers) => {
+    //   console.log("headers", headers);
+    // });
 
     this.streamClient.onMessage((msg) => {
       const m = msg.toObject();
@@ -65,7 +65,6 @@ export class GrpcMetricClient {
         value: m.value,
       };
       this.data.value.push(gMetric);
-      console.log(gMetric);
     });
     this.streamClient.onEnd((code: grpc.Code, msg: string) => {
       console.log(`closed stream. code ${code}, message: ${msg}`, code, msg);
