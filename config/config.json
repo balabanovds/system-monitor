@@ -1,0 +1,15 @@
+{
+  "app": {
+    "interval_sec": 1,
+    "timeout_sec": 30,
+    "delete_old_sec": 30,
+    "parsers": [
+      "load_avg"
+    ]
+  },
+  "grpc": {
+    "host": "localhost",
+    "port": 9000,
+    "http_port": 9001
+  }
+}
