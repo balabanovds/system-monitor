@@ -8,13 +8,19 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { getStream, GrpcMetricClient } from "../traits";
-import { HOST, PORT } from "../main";
+import { GrpcMetricClient } from "../traits";
 
 export default defineComponent({
   name: "Chart",
-  setup() {
-    // const { data } = getStream(HOST, PORT);
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    console.log(props);
+
     const client = GrpcMetricClient.getInstance();
     const { data } = client.getters();
 

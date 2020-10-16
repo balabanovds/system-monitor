@@ -8,15 +8,13 @@
 </template>
 
 <script lang="ts">
-import { HOST, PORT } from "../main";
-import { getStream, GrpcMetricClient } from "../traits";
+import { GrpcMetricClient } from "../traits";
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserInput",
   setup() {
     const client = GrpcMetricClient.getInstance();
-    // const { n, m, start, stop } = getStream(HOST, PORT);
     const { n, m } = client.getters();
     function onConnect() {
       client.startStream();

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <user-input />
-    <chart />
+    <chart name="TEST" />
   </div>
 </template>
 
