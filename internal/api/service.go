@@ -1,12 +1,17 @@
 package api
 
 import (
+	"errors"
 	"log"
 
 	"github.com/balabanovds/smonitor/internal/models"
 	"github.com/golang/protobuf/ptypes"
 
 	"github.com/balabanovds/smonitor/internal/app"
+)
+
+var (
+	ErrWrongInput = errors.New("wrong input value")
 )
 
 type Service struct {
@@ -18,6 +23,10 @@ func NewService(app app.App) *Service {
 }
 
 func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
+	if req.GetN() <= 0 || req.GetM() <= 0 {
+		return ErrWrongInput
+	}
+
 	log.Printf("new consumer each %ds for last %ds", req.GetN(), req.GetM())
 
 	for m := range s.app.Request(srv.Context(), int(req.GetN()), int(req.GetM())) {
