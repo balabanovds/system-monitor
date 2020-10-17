@@ -14,31 +14,33 @@ import (
 )
 
 type App struct {
-	storage   metrics.Storage
-	parsers   []func() parsers.Parser
-	interval  time.Duration
-	timeout   time.Duration
-	deleteOld time.Duration
+	storage     metrics.Storage
+	parsers     []func() parsers.Parser
+	parserTypes []models.ParserType
+	interval    time.Duration
+	timeout     time.Duration
+	deleteOld   time.Duration
 }
 
 type InMetricChan <-chan models.Metric
 
 func New(cfg Config, storage metrics.Storage) *App {
-	var prs []func() parsers.Parser
+	var parserFuncs []func() parsers.Parser
 
 	for _, p := range cfg.Parsers {
-		pr := getParser(p)
+		pr := getParserFunc(p)
 		if pr != nil {
-			prs = append(prs, pr)
+			parserFuncs = append(parserFuncs, pr)
 		}
 	}
 
 	return &App{
-		storage:   storage,
-		parsers:   prs,
-		interval:  time.Duration(cfg.Interval) * time.Second,
-		timeout:   time.Duration(cfg.Timeout) * time.Second,
-		deleteOld: time.Duration(cfg.DeleteOld) * time.Second,
+		storage:     storage,
+		parsers:     parserFuncs,
+		parserTypes: cfg.Parsers,
+		interval:    time.Duration(cfg.Interval) * time.Second,
+		timeout:     time.Duration(cfg.Timeout) * time.Second,
+		deleteOld:   time.Duration(cfg.DeleteOld) * time.Second,
 	}
 }
 
@@ -84,7 +86,7 @@ func (a *App) worker(ctx context.Context) InMetricChan {
 		}
 		streams[i] = shifter(ctx, p.Parse(ctx))
 	}
-	return fanIn(ctx, streams...)
+	return joinChannels(ctx, streams...)
 }
 
 func shifter(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
@@ -114,7 +116,7 @@ func shifter(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
 	return outCh
 }
 
-func fanIn(ctx context.Context, streams ...InMetricChan) InMetricChan {
+func joinChannels(ctx context.Context, streams ...InMetricChan) InMetricChan {
 	var wg sync.WaitGroup
 	outCh := make(chan models.Metric)
 
@@ -142,7 +144,7 @@ func fanIn(ctx context.Context, streams ...InMetricChan) InMetricChan {
 	return outCh
 }
 
-func getParser(pType models.ParserType) func() parsers.Parser {
+func getParserFunc(pType models.ParserType) func() parsers.Parser {
 	switch pType {
 	case models.LoadAvg:
 		return parsers.NewLoadAvgParser
