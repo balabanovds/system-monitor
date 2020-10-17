@@ -5,9 +5,11 @@ package metric;
 option go_package = ".;api";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service Metrics {
   rpc GetStream(Request) returns (stream Metric) {}
+  rpc ParsersInfo(google.protobuf.Empty) returns(ParsersInfoResponse) {}
 }
 
 message Metric {
@@ -22,20 +24,38 @@ message Request {
   int32 M = 2;
 }
 
+message ParsersInfoResponse {
+  repeated ParserInfo List = 1;
+}
+
+message ParserInfo {
+  ParserType Type = 1;
+  repeated MetricType MetricTypes = 2;
+}
+
 enum MetricType {
-    UNDEFINED = 0;
-    LoadAverage1Min = 1;
-    LoadAverage5Min = 2;
-    LoadAverage15Min = 3;
-    CPUUser = 4;
-    CPUSystem = 5;
-    CPUIdle = 6;
-    IOtps = 7;
-    IOReadKbps = 8;
-    IOWriteKbps = 9;
-    IOCPUuser = 10;
-    IOCPUsystem = 11;
-    IOCPUidle = 12;
-    FSMBFree = 13;
-    FSInodeFree = 14;
+  UNDEFINED = 0;
+  LoadAverage1Min = 1;
+  LoadAverage5Min = 2;
+  LoadAverage15Min = 3;
+  CPUUser = 4;
+  CPUSystem = 5;
+  CPUIdle = 6;
+  IOtps = 7;
+  IOReadKbps = 8;
+  IOWriteKbps = 9;
+  IOCPUuser = 10;
+  IOCPUsystem = 11;
+  IOCPUidle = 12;
+  FSMBFree = 13;
+  FSInodeFree = 14;
+}
+
+enum ParserType {
+  UNDEF = 0;
+	LoadAverage = 1;
+  CPU = 2;
+	IO = 3;
+	FS = 4;
+	Net = 5;
 }

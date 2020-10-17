@@ -8,8 +8,8 @@ import (
 	"github.com/balabanovds/smonitor/internal/models"
 )
 
-// Request each n seconds provide report for last m seconds.
-func (a *App) Request(ctx context.Context, n, m int) InMetricChan {
+// RequestStream each n seconds provide report for last m seconds.
+func (a *App) RequestStream(ctx context.Context, n, m int) InMetricChan {
 	outCh := make(chan models.Metric)
 
 	if n < m {
