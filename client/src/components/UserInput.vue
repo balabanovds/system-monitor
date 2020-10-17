@@ -1,36 +1,48 @@
 <template>
-  <div>
-    <input type="text" v-model="n" />
-    <input type="text" v-model="m" />
-    <button @click="onConnect">run</button>
-    <button @click="onCancel">stop</button>
-  </div>
+    <div>
+        <input
+            type="text"
+            v-model="n"
+            :disabled="active"
+            placeholder="tick period"
+        />
+        <input
+            type="text"
+            v-model="m"
+            :disabled="active"
+            placeholder="measurement period"
+        />
+        <button @click="onConnect" v-show="!active">run</button>
+        <button @click="onCancel" v-show="active">stop</button>
+    </div>
 </template>
 
 <script lang="ts">
-import { GrpcMetricClient } from "../traits";
-import { defineComponent } from "vue";
+import { GrpcMetricClient } from '../traits';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: "UserInput",
-  setup() {
-    const client = GrpcMetricClient.getInstance();
-    const { n, m } = client.getters();
-    function onConnect() {
-      client.startStream();
-    }
+    name: 'UserInput',
+    setup() {
+        const client = GrpcMetricClient.getInstance();
+        const { n, m, active } = client.streamGetters();
 
-    function onCancel() {
-      client.stopStream();
-    }
+        function onConnect() {
+            client.startStream();
+        }
 
-    return {
-      n,
-      m,
-      onConnect,
-      onCancel,
-    };
-  },
+        function onCancel() {
+            client.stopStream();
+        }
+
+        return {
+            n,
+            m,
+            active,
+            onConnect,
+            onCancel,
+        };
+    },
 });
 </script>
 

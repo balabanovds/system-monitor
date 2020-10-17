@@ -10,14 +10,15 @@
     },
     "dependencies": {
         "@improbable-eng/grpc-web": "^0.13.0",
+        "chart.js": "^2.9.3",
         "core-js": "^3.6.5",
-        "d3": "^6.2.0",
+        "dayjs": "^1.9.3",
         "google-protobuf": "^3.13.0",
         "ts-protoc-gen": "^0.13.0",
         "vue": "^3.0.0"
     },
     "devDependencies": {
-        "@types/d3": "^5.16.3",
+        "@types/chart.js": "^2.9.25",
         "@types/google-protobuf": "^3.7.3",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "@typescript-eslint/parser": "^2.33.0",
