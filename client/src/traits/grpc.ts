@@ -1,9 +1,14 @@
 import { grpc } from '@improbable-eng/grpc-web';
-import { Metric, Request } from '../proto/metric_service_pb';
+import {
+    Metric,
+    Request,
+    ParsersInfoResponse,
+} from '../proto/metric_service_pb';
 import { Metrics } from '../proto/metric_service_pb_service';
+import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 
 import { ref } from 'vue';
-import { HOST, PORT } from '@/main';
+import { HOST, PORT } from '@/consts';
 
 export interface GMetric {
     title: string;
@@ -13,14 +18,25 @@ export interface GMetric {
     value: number;
 }
 
+export interface ChartInfo {
+    title: string;
+    metrics: {
+        type: number;
+        title: string;
+    }[];
+}
+
 export class GrpcMetricClient {
     private n = ref(0);
     private m = ref(0);
     private data = ref(Array<GMetric>(0));
+    private infoList = ref(Array<ChartInfo>(0));
+
     private active = ref(false);
     private addr: string;
 
     private streamClient?: grpc.Client<Request, Metric> = undefined;
+    private infoClient?: grpc.Client<Empty, ParsersInfoResponse> = undefined;
 
     private static instance: GrpcMetricClient;
 
@@ -47,10 +63,6 @@ export class GrpcMetricClient {
             host: this.addr,
         });
 
-        // this.streamClient.onHeaders((headers) => {
-        //   console.log("headers", headers);
-        // });
-
         this.streamClient.onMessage(msg => {
             const m = msg.toObject();
             const t = m.time;
@@ -65,7 +77,6 @@ export class GrpcMetricClient {
                 value: m.value,
             };
             this.data.value.push(gMetric);
-            console.log(gMetric);
         });
 
         this.streamClient.onEnd((code: grpc.Code, msg: string) => {
@@ -93,12 +104,38 @@ export class GrpcMetricClient {
         }
     }
 
+    public getInfo() {
+        this.infoClient = grpc.client(Metrics.ParsersInfo, {
+            host: this.addr,
+        });
+
+        this.infoClient.onMessage((msg: ParsersInfoResponse) => {
+            for (const p of msg.getListList()) {
+                //TODO complete here
+            }
+        });
+
+        this.infoClient.start();
+
+        this.infoClient.send(new Empty());
+    }
+
+    public closeInfoClient() {
+        this.infoClient?.close();
+    }
+
     public streamGetters() {
         return {
             n: this.n,
             m: this.m,
             data: this.data,
             active: this.active,
+        };
+    }
+
+    public infoGetter() {
+        return {
+            list: this.infoList,
         };
     }
 }
