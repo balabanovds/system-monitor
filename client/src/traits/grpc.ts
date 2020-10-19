@@ -20,10 +20,7 @@ export interface GMetric {
 
 export interface ChartInfo {
     title: string;
-    metrics: {
-        type: number;
-        title: string;
-    }[];
+    metricTypes: number[];
 }
 
 export class GrpcMetricClient {
@@ -111,7 +108,11 @@ export class GrpcMetricClient {
 
         this.infoClient.onMessage((msg: ParsersInfoResponse) => {
             for (const p of msg.getListList()) {
-                //TODO complete here
+                const gInfo: ChartInfo = {
+                    title: p.getName(),
+                    metricTypes: p.getMetrictypesList(),
+                };
+                this.infoList.value.push(gInfo);
             }
         });
 

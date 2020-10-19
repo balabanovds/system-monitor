@@ -18,8 +18,9 @@
 </template>
 
 <script lang="ts">
-import { GrpcMetricClient } from '../traits';
 import { defineComponent } from 'vue';
+
+import { GrpcMetricClient } from '../traits';
 
 export default defineComponent({
     name: 'UserInput',
