@@ -11,18 +11,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import {
+    defineComponent,
+    reactive,
+    ref,
+    onMounted,
+    onBeforeUnmount,
+} from 'vue';
 import { ChartType } from '../components/types';
 import UserInput from '../components/UserInput.vue';
 import Chart from '../components/Chart.vue';
 import { MetricType } from '../proto/metric_service_pb';
-
-const COLOR_1 = 'rgba(252, 165, 3, .6)';
-const BG_COLOR_1 = 'rgba(252, 165, 3, .1)';
-const COLOR_2 = 'rgba(3, 128, 252, .6)';
-const BG_COLOR_2 = 'rgba(3, 128, 252, .1)';
-const COLOR_3 = 'rgba(3, 252, 86, .6)';
-const BG_COLOR_3 = 'rgba(3, 252, 86, .1)';
+import { GrpcMetricClient } from '../traits';
+import { getBackground, getColor } from '../utils';
 
 export default defineComponent({
     name: 'Home',
@@ -31,23 +32,33 @@ export default defineComponent({
             width: ref(600),
             height: ref(400),
         });
+
+        const client = GrpcMetricClient.getInstance();
         const chartTypes = ref<Array<ChartType>>([
             {
                 type: MetricType.LOADAVERAGE1MIN,
-                borderColor: COLOR_1,
-                backgroundColor: BG_COLOR_1,
+                borderColor: getColor('20,20,20'),
+                backgroundColor: getBackground('20,20,20'),
             },
             {
                 type: MetricType.LOADAVERAGE5MIN,
-                borderColor: COLOR_2,
-                backgroundColor: BG_COLOR_2,
+                borderColor: getColor('20,20,20'),
+                backgroundColor: getBackground('20,20,20'),
             },
             {
                 type: MetricType.LOADAVERAGE15MIN,
-                borderColor: COLOR_3,
-                backgroundColor: BG_COLOR_3,
+                borderColor: getColor('20,20,20'),
+                backgroundColor: getBackground('20,20,20'),
             },
         ]);
+
+        onMounted(() => {
+            client.getInfo();
+        });
+
+        onBeforeUnmount(() => {
+            client.closeInfoClient();
+        });
 
         return {
             size,
