@@ -31,6 +31,7 @@ message ParsersInfoResponse {
 message ParserInfo {
   ParserType Type = 1;
   repeated MetricType MetricTypes = 2;
+  string Name = 3;
 }
 
 enum MetricType {
