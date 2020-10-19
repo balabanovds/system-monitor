@@ -56,6 +56,7 @@ func (s *Service) ParsersInfo(ctx context.Context, _ *empty.Empty) (*ParsersInfo
 
 		var pbParserInfo ParserInfo
 		pbParserInfo.Type = ParserType(pi.Type)
+		pbParserInfo.Name = pi.Name
 		var pbMetricTypes []MetricType
 		for _, mt := range pi.MetricTypes {
 			select {
