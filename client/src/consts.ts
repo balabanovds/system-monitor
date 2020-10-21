@@ -1,5 +1,9 @@
-export const HOST: string = process.env.API_HOST || 'localhost';
-export const PORT: number = process.env.API_PORT || 9001;
+export const HOST: string = process.env.SERVER_HOST || 'localhost';
+export const PORT: number = process.env.SERVER_HTTP_PORT || 9001;
+
+export const ENVOY_HOST: string = process.env.ENVOY_HOST
+export const ENVOY_PORT: number = process.env.ENVOY_PORT
+
 export const X_AXIS_NUM = 10;
 
 export const COLORS: string[] = [

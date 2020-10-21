@@ -18,6 +18,3 @@ protoc \
     --js_out="import_style=commonjs,binary:${OUT_DIR}" \
     --ts_out="service=grpc-web:${OUT_DIR}" \
     ${SCHEMA_DIR}/*.proto
-
-# old version
-# "PATH=$PATH:./node_modules/.bin protoc -I=../schema --js_out=import_style=typescript:./src/proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:./src/proto ../schema/*.proto"
