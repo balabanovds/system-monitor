@@ -8,7 +8,7 @@ import { Metrics } from '../proto/metric_service_pb_service';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 
 import { ref } from 'vue';
-import { HOST, PORT } from '@/main';
+import { HOST, PORT } from '@/consts';
 
 export interface GMetric {
     title: string;

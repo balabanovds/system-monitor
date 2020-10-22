@@ -65,7 +65,7 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 				default:
 				}
 
-				for m := range a.worker(ctx) {
+				for m := range a.createChan(ctx) {
 					a.storage.Save(m)
 				}
 			}
@@ -75,7 +75,7 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 }
 
 // fan-out - fan-in pattern.
-func (a *App) worker(ctx context.Context) InMetricChan {
+func (a *App) createChan(ctx context.Context) InMetricChan {
 	streams := make([]InMetricChan, len(a.parsers))
 	for i, parFn := range a.parsers {
 		p := parFn()
@@ -84,12 +84,12 @@ func (a *App) worker(ctx context.Context) InMetricChan {
 			break
 		default:
 		}
-		streams[i] = shifter(ctx, p.Parse(ctx))
+		streams[i] = result2Metric(ctx, p.Parse(ctx))
 	}
-	return joinChannels(ctx, streams...)
+	return muxChannels(ctx, streams...)
 }
 
-func shifter(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
+func result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
 	outCh := make(chan models.Metric)
 	go func() {
 		defer close(outCh)
@@ -116,7 +116,7 @@ func shifter(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
 	return outCh
 }
 
-func joinChannels(ctx context.Context, streams ...InMetricChan) InMetricChan {
+func muxChannels(ctx context.Context, streams ...InMetricChan) InMetricChan {
 	var wg sync.WaitGroup
 	outCh := make(chan models.Metric)
 

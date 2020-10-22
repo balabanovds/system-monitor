@@ -6,12 +6,10 @@ import (
 	"os/exec"
 
 	"github.com/balabanovds/smonitor/internal/models"
-
-	"github.com/balabanovds/smonitor/pkg/cmd"
 )
 
 type Collector struct {
-	cmds []*exec.Cmd
+	cmd *exec.Cmd
 }
 
 type Result struct {
@@ -26,28 +24,26 @@ type ExecResult struct {
 
 type ParseFn func(data []byte) ([]models.Metric, error)
 
-func New(cmds ...*exec.Cmd) *Collector {
-	return &Collector{cmds}
+func New(command string) *Collector {
+	return &Collector{
+		cmd: exec.Command("/bin/sh", "-c", command),
+	}
 }
 
 // pipeline pattern.
 func (c *Collector) Run(ctx context.Context, parseFn ParseFn) <-chan Result {
-	return c.parse(ctx, c.execCmd(ctx, c.cmds...), parseFn)
+	return c.parse(ctx, c.execCmd(ctx, c.cmd), parseFn)
 }
 
-func (c *Collector) execCmd(ctx context.Context, cmds ...*exec.Cmd) <-chan ExecResult {
+func (c *Collector) execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 	stream := make(chan ExecResult)
 	go func() {
 		defer close(stream)
 
-		p, err := cmd.New(cmds...)
-		if err != nil {
-			stream <- ExecResult{Err: err}
-			return
-		}
-
 		var out bytes.Buffer
-		if err != p.Run(ctx, &out) {
+		cmd.Stdout = &out
+
+		if err := cmd.Run(); err != nil {
 			stream <- ExecResult{Err: err}
 			return
 		}
@@ -75,7 +71,7 @@ func (c *Collector) parse(ctx context.Context, inStream <-chan ExecResult, parse
 				}
 				continue
 			}
-			mtrcs, err := parseFn(i.Data)
+			metrics, err := parseFn(i.Data)
 			if err != nil {
 				select {
 				case <-ctx.Done():
@@ -85,7 +81,7 @@ func (c *Collector) parse(ctx context.Context, inStream <-chan ExecResult, parse
 				continue
 			}
 
-			for _, m := range mtrcs {
+			for _, m := range metrics {
 				select {
 				case <-ctx.Done():
 					return

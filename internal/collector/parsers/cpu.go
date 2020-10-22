@@ -21,7 +21,10 @@ func (p *CPUParser) Parse(ctx context.Context) <-chan collector.Result {
 
 func (p *CPUParser) parseFn(data []byte) ([]models.Metric, error) {
 	now := time.Now()
-	fields := p.parse(string(data))
+	fields, err := p.parse(data)
+	if err != nil {
+		return nil, err
+	}
 
 	ffields := make([]float64, 0)
 	for _, f := range fields {

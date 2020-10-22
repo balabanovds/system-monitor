@@ -1,43 +1,43 @@
 version: '3'
 
 services:
-    client:
-        depends_on:
-            - envoy
-        build:
-            context: ../client
-            dockerfile: ./Dockerfile
-        environment:
-            CLIENT_PORT: ${CLIENT_PORT}
-            SERVER_HTTP_PORT: ${SERVER_HTTP_PORT}
-            SERVER_HOST: server
-            ENVOY_HOST: envoy
-        networks:
-            smonitor:
-                aliases:
-                    - client
-        ports:
-            - '${CLIENT_PORT}:${CLIENT_PORT}'
-    envoy:
-        build:
-            context: .
-            dockerfile: ./Dockerfile.envoy
-        networks:
-            smonitor:
-                aliases:
-                    - envoy
-    server:
-        build:
-            context: ..
-            dockerfile: ./Dockerfile
-        environment:
-            GRPC_PORT: ${SERVER_GRPC_PORT}
-            HTTP_PORT: ${SERVER_HTTP_PORT}
-        networks:
-            smonitor:
-                aliases:
-                    - server
+  client:
+    depends_on:
+      - envoy
+    build:
+      context: ../client
+      dockerfile: ./Dockerfile
+    environment:
+      CLIENT_PORT: ${CLIENT_PORT}
+      SERVER_HTTP_PORT: ${SERVER_HTTP_PORT}
+      SERVER_HOST: server
+      ENVOY_HOST: envoy
+    networks:
+      smonitor:
+        aliases:
+          - client
+    ports:
+      - '${CLIENT_PORT}:${CLIENT_PORT}'
+  envoy:
+    build:
+      context: ./envoy
+      dockerfile: ./Dockerfile
+    networks:
+      smonitor:
+        aliases:
+          - envoy
+  server:
+    build:
+      context: ..
+      dockerfile: ./Dockerfile
+    environment:
+      GRPC_PORT: ${SERVER_GRPC_PORT}
+      HTTP_PORT: ${SERVER_HTTP_PORT}
+    networks:
+      smonitor:
+        aliases:
+          - server
 
 networks:
-    smonitor:
-        driver: bridge
+  smonitor:
+    driver: bridge

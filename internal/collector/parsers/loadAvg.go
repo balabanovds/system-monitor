@@ -3,7 +3,6 @@ package parsers
 import (
 	"context"
 	"fmt"
-	"os/exec"
 	"strconv"
 	"time"
 
@@ -18,9 +17,7 @@ type LoadAvgParser struct {
 
 func NewLoadAvgParser() Parser {
 	return &LoadAvgParser{
-		col: collector.New(
-			exec.Command("uptime"),
-		),
+		col: collector.New("uptime"),
 	}
 }
 
