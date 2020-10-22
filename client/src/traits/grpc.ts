@@ -8,7 +8,7 @@ import { Metrics } from '../proto/metric_service_pb_service';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 
 import { ref } from 'vue';
-import { HOST, PORT } from '@/consts';
+import { HOST, PORT } from '@/main';
 
 export interface GMetric {
     title: string;
@@ -20,10 +20,7 @@ export interface GMetric {
 
 export interface ChartInfo {
     title: string;
-    metrics: {
-        type: number;
-        title: string;
-    }[];
+    metricTypes: number[];
 }
 
 export class GrpcMetricClient {
@@ -111,7 +108,11 @@ export class GrpcMetricClient {
 
         this.infoClient.onMessage((msg: ParsersInfoResponse) => {
             for (const p of msg.getListList()) {
-                //TODO complete here
+                const gInfo: ChartInfo = {
+                    title: p.getName(),
+                    metricTypes: p.getMetrictypesList(),
+                };
+                this.infoList.value.push(gInfo);
             }
         });
 

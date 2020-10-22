@@ -2,10 +2,12 @@
     <div class="home">
         <user-input />
         <chart
-            name="Load Average"
+            v-for="(c, i) in charts"
+            :key="i"
+            :name="c.title"
             :width="size.width"
             :height="size.height"
-            :chartTypes="chartTypes"
+            :metrics="c.metrics"
         />
     </div>
 </template>
@@ -17,13 +19,16 @@ import {
     ref,
     onMounted,
     onBeforeUnmount,
+    computed,
+    ComputedRef,
 } from 'vue';
-import { ChartType } from '../components/types';
+
+import { ChartBase, ChartMetric } from '../components/types';
 import UserInput from '../components/UserInput.vue';
 import Chart from '../components/Chart.vue';
-import { MetricType } from '../proto/metric_service_pb';
 import { GrpcMetricClient } from '../traits';
 import { getBackground, getColor } from '../utils';
+import { COLORS } from '../consts';
 
 export default defineComponent({
     name: 'Home',
@@ -34,23 +39,25 @@ export default defineComponent({
         });
 
         const client = GrpcMetricClient.getInstance();
-        const chartTypes = ref<Array<ChartType>>([
-            {
-                type: MetricType.LOADAVERAGE1MIN,
-                borderColor: getColor('20,20,20'),
-                backgroundColor: getBackground('20,20,20'),
-            },
-            {
-                type: MetricType.LOADAVERAGE5MIN,
-                borderColor: getColor('20,20,20'),
-                backgroundColor: getBackground('20,20,20'),
-            },
-            {
-                type: MetricType.LOADAVERAGE15MIN,
-                borderColor: getColor('20,20,20'),
-                backgroundColor: getBackground('20,20,20'),
-            },
-        ]);
+        const { list } = client.infoGetter();
+
+        const charts: ComputedRef<Array<ChartBase>> = computed(() => {
+            return list.value.map(m => {
+                const metrics: Array<ChartMetric> = m.metricTypes.map(
+                    (t, i) => {
+                        return {
+                            type: t,
+                            borderColor: getColor(COLORS[i]),
+                            backgroundColor: getBackground(COLORS[i]),
+                        };
+                    },
+                );
+                return {
+                    title: m.title,
+                    metrics,
+                };
+            });
+        });
 
         onMounted(() => {
             client.getInfo();
@@ -62,7 +69,7 @@ export default defineComponent({
 
         return {
             size,
-            chartTypes,
+            charts,
         };
     },
 

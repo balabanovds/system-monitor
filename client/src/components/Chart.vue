@@ -16,10 +16,11 @@ import {
     toRefs,
     onBeforeUnmount,
 } from 'vue';
-import { GrpcMetricClient } from '../traits';
 import Chart from 'chart.js';
-import { ChartType } from './types';
 import * as dayjs from 'dayjs';
+
+import { GrpcMetricClient } from '../traits';
+import { ChartMetric } from './types';
 import { X_AXIS_NUM } from '../consts';
 import { takeLast } from '../utils';
 
@@ -30,8 +31,8 @@ export default defineComponent({
             type: String,
             required: true,
         },
-        chartTypes: {
-            type: Object as () => Array<ChartType>,
+        metrics: {
+            type: Object as () => Array<ChartMetric>,
             required: true,
         },
         width: {
@@ -44,7 +45,7 @@ export default defineComponent({
         },
     },
     setup(props) {
-        if (props.chartTypes.length === 0) {
+        if (props.metrics.length === 0) {
             return;
         }
 
@@ -54,7 +55,7 @@ export default defineComponent({
             el: ref<HTMLCanvasElement | null>(null),
             labels: computed(() => {
                 const list = data.value
-                    .filter(m => m.type === props.chartTypes[0].type)
+                    .filter(m => m.type === props.metrics[0].type)
                     .map(m => {
                         const d = dayjs.unix(m.seconds);
                         return d.format('hh:mm:ss');
@@ -62,7 +63,7 @@ export default defineComponent({
                 return takeLast(list, X_AXIS_NUM);
             }),
             datasets: computed(() => {
-                return props.chartTypes.map(t => {
+                return props.metrics.map(t => {
                     const filtered = data.value.filter(m => m.type === t.type);
                     const label = filtered[0]?.title || 'undefined';
 
