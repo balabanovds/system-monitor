@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+    server:
+        ports:
+            - '${SERVER_GRPC_PORT}:${SERVER_GRPC_PORT}'
+            - '${SERVER_HTTP_PORT}:${SERVER_HTTP_PORT}'
