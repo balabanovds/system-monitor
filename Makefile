@@ -2,13 +2,12 @@ lint:
 	golangci-lint run ./...
 
 test-linux:
-	./scripts/go14_linux.sh test -race -count 100 ./...
+	./scripts/go14_linux.sh test -race ./...
 
 test-darwin:
-	go test -race -count 100 ./...
+	go test -race  ./...
 
-test: lint 
-	go test -race -count 100 ./...
+test: lint test-darwin test-linux
 
 dl-client:
 	cd client && npm install && cd ..
@@ -22,11 +21,11 @@ build: test generate
 
 dev: test generate
 	docker-compose -f ./deployments/docker-compose.yml -f ./deployments/docker-compose.dev.yml -p smonitor up -d --build
-	
+
 up: test generate
 	docker-compose -f ./deployments/docker-compose.yml -p smonitor up -d
-	
-down: 
+
+down:
 	docker-compose -f ./deployments/docker-compose.yml -p smonitor down
 
 logs:

@@ -34,8 +34,8 @@ func main() {
 
 	srv := api.NewServer(cfg.Grpc)
 
-	ctx, cnc := context.WithCancel(context.Background())
-	defer cnc()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	a := app.New(cfg.App, inmem.New())
 
