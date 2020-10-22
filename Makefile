@@ -10,7 +10,10 @@ test-darwin:
 test: lint 
 	go test -race -count 100 ./...
 
-generate:
+dl-client:
+	cd client && npm install && cd ..
+
+generate: dl-client
 	protoc -I=./schema --go_out=plugins=grpc:./internal/api/ ./schema/metric_service.proto
 	cd client && ./generate.sh && ./generate_classic.sh && cd ..
 

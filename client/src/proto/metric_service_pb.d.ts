@@ -94,6 +94,9 @@ export class ParserInfo extends jspb.Message {
   setMetrictypesList(value: Array<MetricTypeMap[keyof MetricTypeMap]>): void;
   addMetrictypes(value: MetricTypeMap[keyof MetricTypeMap], index?: number): MetricTypeMap[keyof MetricTypeMap];
 
+  getName(): string;
+  setName(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ParserInfo.AsObject;
   static toObject(includeInstance: boolean, msg: ParserInfo): ParserInfo.AsObject;
@@ -108,6 +111,7 @@ export namespace ParserInfo {
   export type AsObject = {
     type: ParserTypeMap[keyof ParserTypeMap],
     metrictypesList: Array<MetricTypeMap[keyof MetricTypeMap]>,
+    name: string,
   }
 }
 
