@@ -69,7 +69,7 @@ func avg(list []models.Metric) models.Metric {
 	for _, m := range list {
 		sum += m.Value
 	}
-	res.Value = math.Round(sum*100) / 100
+	res.Value = math.Round(sum/float64(l)*100) / 100
 
 	return res
 }
