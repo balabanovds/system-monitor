@@ -19,10 +19,10 @@ import {
 import Chart from 'chart.js';
 import * as dayjs from 'dayjs';
 
-import { GrpcMetricClient } from '../traits';
+import { GrpcMetricClient } from '@/traits';
 import { ChartMetric } from './types';
-import { X_AXIS_NUM } from '../consts';
-import { takeLast } from '../utils';
+import { X_AXIS_NUM } from '@/consts';
+import { takeLast } from '@/utils';
 
 export default defineComponent({
     name: 'Chart',

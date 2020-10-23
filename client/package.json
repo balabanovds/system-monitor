@@ -16,7 +16,6 @@
         "dayjs": "^1.9.3",
         "google-protobuf": "^3.13.0",
         "grpc-web": "^1.2.1",
-        "ts-protoc-gen": "^0.13.0",
         "vue": "^3.0.0"
     },
     "devDependencies": {
@@ -33,6 +32,7 @@
         "eslint": "^6.7.2",
         "eslint-plugin-vue": "^7.0.0-0",
         "protoc-gen-grpc-web": "^1.2.0",
-        "typescript": "~3.9.3"
+        "typescript": "~3.9.3",
+        "ts-protoc-gen": "^0.13.0"
     }
 }

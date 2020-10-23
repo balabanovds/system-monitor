@@ -23,12 +23,12 @@ import {
     ComputedRef,
 } from 'vue';
 
-import { ChartBase, ChartMetric } from '../components/types';
-import UserInput from '../components/UserInput.vue';
-import Chart from '../components/Chart.vue';
-import { GrpcMetricClient } from '../traits';
-import { getBackground, getColor } from '../utils';
-import { COLORS } from '../consts';
+import { ChartBase, ChartMetric } from '@/components/types';
+import UserInput from '@/components/UserInput.vue';
+import Chart from '@/components/Chart.vue';
+import { GrpcMetricClient } from '@/traits';
+import { getBackground, getColor } from '@/utils';
+import { COLORS } from '@/consts';
 
 export default defineComponent({
     name: 'Home',
