@@ -8,7 +8,7 @@ import (
 	"github.com/balabanovds/smonitor/internal/models"
 )
 
-// RequestStream each n seconds provide report for last m seconds.
+// RequestStream each N seconds provide report for last M seconds.
 func (a *App) RequestStream(ctx context.Context, n, m int) InMetricChan {
 	outCh := make(chan models.Metric)
 

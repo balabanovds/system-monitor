@@ -1,14 +1,10 @@
-import { grpc } from '@improbable-eng/grpc-web';
-import {
-    Metric,
-    Request,
-    ParsersInfoResponse,
-} from '@/proto/metric_service_pb';
-import { Metrics } from '@/proto/metric_service_pb_service';
-import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
+import {grpc} from '@improbable-eng/grpc-web';
+import {Metric, ParsersInfoResponse, Request,} from '@/proto/metric_service_pb';
+import {Metrics} from '@/proto/metric_service_pb_service';
+import {Empty} from 'google-protobuf/google/protobuf/empty_pb';
 
-import { ref } from 'vue';
-import { HOST, PORT } from '@/consts';
+import {ref} from 'vue';
+import {HOST, PORT} from '@/consts';
 
 export interface GMetric {
     title: string;
@@ -30,7 +26,8 @@ export class GrpcMetricClient {
     private infoList = ref(Array<ChartInfo>(0));
 
     private active = ref(false);
-    private addr: string;
+    private error = ref('');
+    private readonly addr: string;
 
     private streamClient?: grpc.Client<Request, Metric> = undefined;
     private infoClient?: grpc.Client<Empty, ParsersInfoResponse> = undefined;
@@ -41,6 +38,16 @@ export class GrpcMetricClient {
         this.addr = `http://${host}:${port}`;
     }
 
+    private async ping() {
+        await fetch(`http://${HOST}:${PORT}/metric.Metrics/ParsersInfo`, {
+            method: 'POST',
+            mode: 'no-cors'
+        })
+            .catch(e => {
+                this.error.value = 'server is not reachable'
+            });
+    }
+
     public static getInstance(): GrpcMetricClient {
         if (!GrpcMetricClient.instance) {
             GrpcMetricClient.instance = new GrpcMetricClient(HOST, PORT);
@@ -49,8 +56,11 @@ export class GrpcMetricClient {
     }
 
     public startStream() {
+        this.error.value = ''
         if (this.n.value === 0 || this.m.value === 0) {
-            throw new Error('n and m values should be positive');
+            this.error.value = 'values should be >= 0';
+            this.active.value = false;
+            return
         }
         const req = new Request();
         req.setN(this.n.value);
@@ -82,6 +92,7 @@ export class GrpcMetricClient {
                 code,
                 msg,
             );
+            this.error.value = "GRPC server closed connection"
             this.streamClient?.close();
             this.active.value = false;
         });
@@ -95,6 +106,7 @@ export class GrpcMetricClient {
         try {
             this.streamClient?.close();
         } catch (e) {
+            this.error.value = 'failed to stop grpc client'
             console.error('failed to stop grpc client', e);
         } finally {
             this.active.value = false;
@@ -102,6 +114,10 @@ export class GrpcMetricClient {
     }
 
     public getInfo() {
+        this.ping()
+        if (this.error.value) {
+            return
+        }
         this.infoClient = grpc.client(Metrics.ParsersInfo, {
             host: this.addr,
         });
@@ -117,7 +133,6 @@ export class GrpcMetricClient {
         });
 
         this.infoClient.start();
-
         this.infoClient.send(new Empty());
     }
 
@@ -137,6 +152,7 @@ export class GrpcMetricClient {
     public infoGetter() {
         return {
             list: this.infoList,
+            error: this.error
         };
     }
 }
