@@ -1,6 +1,7 @@
 package inmem
 
 import (
+	"go.uber.org/zap"
 	"sync"
 	"time"
 
@@ -12,11 +13,13 @@ import (
 type storage struct {
 	mu   sync.RWMutex
 	data map[time.Time][]models.Metric
+	log  *zap.Logger
 }
 
-func New() metrics.Storage {
+func New(logger *zap.Logger) metrics.Storage {
 	return &storage{
 		data: make(map[time.Time][]models.Metric),
+		log:  logger,
 	}
 }
 

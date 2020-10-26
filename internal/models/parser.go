@@ -20,6 +20,14 @@ func (t ParserType) String() string {
 	return toString[t]
 }
 
+func (t ParserType) Value(str string) ParserType {
+	v, ok := toID[str]
+	if !ok {
+		return Undef
+	}
+	return v
+}
+
 var toString = map[ParserType]string{
 	LoadAvg: "load_avg",
 	CPU:     "cpu",

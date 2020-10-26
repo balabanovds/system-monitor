@@ -2,7 +2,8 @@ package api
 
 import (
 	"fmt"
-	"log"
+	"github.com/balabanovds/smonitor/cmd/config"
+	"go.uber.org/zap"
 	"net"
 	"net/http"
 
@@ -15,17 +16,19 @@ import (
 //go:generate protoc -I=../schema --go_out=plugins=grpc:. ../schema/metric_service.proto
 
 type Server struct {
-	cfg         Config
+	cfg         config.ServerConfig
 	Grpc        *grpc.Server
 	WrappedGrpc *grpcweb.WrappedGrpcServer
+	log         *zap.Logger
 }
 
-func NewServer(cfg Config) *Server {
+func NewServer(cfg config.ServerConfig, logger *zap.Logger) *Server {
 	gs := grpc.NewServer()
 	return &Server{
 		cfg:         cfg,
 		Grpc:        gs,
 		WrappedGrpc: grpcweb.WrapServer(gs),
+		log:         logger,
 	}
 }
 
@@ -40,17 +43,18 @@ func (s *Server) Serve(app app.App) error {
 }
 
 func (s *Server) startGRPC(app app.App, errCh chan<- error) {
-	addr := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.Port)
+	addr := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GRPCPort)
 	lsn, err := net.Listen("tcp", addr)
 	if err != nil {
 		errCh <- err
 		return
 	}
 
-	service := NewService(app)
+	service := NewService(app, s.log)
 	RegisterMetricsServer(s.Grpc, service)
 
-	log.Printf("grpc serving on %s\n", addr)
+	s.log.Info("grpc server listening",
+		zap.String("address", addr))
 	errCh <- s.Grpc.Serve(lsn)
 }
 
@@ -64,7 +68,8 @@ func (s *Server) startHTTP(errCh chan<- error) {
 
 	addr := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.HTTPPort)
 
-	log.Printf("http listening on %s\n", addr)
+	s.log.Info("http server listening",
+		zap.String("address", addr))
 	errCh <- http.ListenAndServe(addr, nil)
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/balabanovds/smonitor/cmd/logger"
 	"log"
 	"os"
 
@@ -27,20 +28,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	cfg, err := config.Unmarshal(configFile)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	cfg, err := config.Parse()
+	handleErr(err)
 
-	srv := api.NewServer(cfg.Grpc)
+	zapLogger, err := logger.New(cfg.Log.Level, cfg.Log.Production)
+	handleErr(err)
+
+	srv := api.NewServer(cfg.Server, zapLogger)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	a := app.New(cfg.App, inmem.New())
+	a := app.New(cfg.App, inmem.New(zapLogger), zapLogger)
 
 	go func() {
 		log.Fatalln(srv.Serve(*a))
 	}()
 	<-a.Run(ctx)
+}
+
+func handleErr(err error) {
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"github.com/balabanovds/smonitor/cmd/config"
+	"go.uber.org/zap"
 	"sync"
 	"time"
 
@@ -18,13 +20,12 @@ type App struct {
 	parsers     []func() parsers.Parser
 	parserTypes []models.ParserType
 	interval    time.Duration
-	timeout     time.Duration
-	deleteOld   time.Duration
+	log         *zap.Logger
 }
 
 type InMetricChan <-chan models.Metric
 
-func New(cfg Config, storage metrics.Storage) *App {
+func New(cfg config.AppConfig, storage metrics.Storage, logger *zap.Logger) *App {
 	var parserFuncs []func() parsers.Parser
 
 	for _, p := range cfg.Parsers {
@@ -39,8 +40,7 @@ func New(cfg Config, storage metrics.Storage) *App {
 		parsers:     parserFuncs,
 		parserTypes: cfg.Parsers,
 		interval:    time.Duration(cfg.Interval) * time.Second,
-		timeout:     time.Duration(cfg.Timeout) * time.Second,
-		deleteOld:   time.Duration(cfg.DeleteOld) * time.Second,
+		log:         logger,
 	}
 }
 
@@ -57,8 +57,9 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 			select {
 			case <-ctx.Done():
 				return
-			case t := <-tick.C:
-				a.storage.Delete(t.Add(-a.deleteOld))
+			case <-tick.C:
+				// TODO thick about delete old
+				//a.storage.Delete(t.Add(-a.deleteOld))
 				select {
 				case <-ctx.Done():
 					return
@@ -84,12 +85,12 @@ func (a *App) createChan(ctx context.Context) InMetricChan {
 			break
 		default:
 		}
-		streams[i] = result2Metric(ctx, p.Parse(ctx))
+		streams[i] = a.result2Metric(ctx, p.Parse(ctx))
 	}
-	return muxChannels(ctx, streams...)
+	return a.muxChannels(ctx, streams...)
 }
 
-func result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
+func (a *App) result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
 	outCh := make(chan models.Metric)
 	go func() {
 		defer close(outCh)
@@ -102,7 +103,7 @@ func result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricCh
 					return
 				}
 				if r.Err != nil {
-					// TODO log here
+					a.log.Error("error in data", zap.Error(r.Err))
 					continue
 				}
 				select {
@@ -116,7 +117,7 @@ func result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricCh
 	return outCh
 }
 
-func muxChannels(ctx context.Context, streams ...InMetricChan) InMetricChan {
+func (a *App) muxChannels(ctx context.Context, streams ...InMetricChan) InMetricChan {
 	var wg sync.WaitGroup
 	outCh := make(chan models.Metric)
 

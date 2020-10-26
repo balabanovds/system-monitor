@@ -3,13 +3,12 @@ package api
 import (
 	"context"
 	"errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"log"
-
 	"github.com/balabanovds/smonitor/internal/models"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
+	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/balabanovds/smonitor/internal/app"
 )
@@ -20,10 +19,14 @@ var (
 
 type Service struct {
 	app app.App
+	log *zap.Logger
 }
 
-func NewService(app app.App) *Service {
-	return &Service{app: app}
+func NewService(app app.App, logger *zap.Logger) *Service {
+	return &Service{
+		app: app,
+		log: logger,
+	}
 }
 
 func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
@@ -31,8 +34,10 @@ func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
 		return status.Error(codes.InvalidArgument, "both arguments should be positive")
 	}
 
-	// TODO logger here
-	log.Printf("new consumer each %ds for last %ds", req.GetN(), req.GetM())
+	s.log.Info("grpc service: new consumer",
+		zap.Int32("polling seconds", req.GetN()),
+		zap.Int32("monitoring seconds", req.GetM()),
+	)
 
 	for m := range s.app.RequestStream(srv.Context(), int(req.GetN()), int(req.GetM())) {
 		metric, err := convMetricToPB(m)

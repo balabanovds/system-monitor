@@ -1,6 +1,7 @@
 package metrics_test
 
 import (
+	"go.uber.org/zap"
 	"testing"
 	"time"
 
@@ -10,8 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	logger = zap.NewNop()
+)
+
 func TestStorage_Get(t *testing.T) {
-	st := inmem.New()
+
+	st := inmem.New(logger)
 
 	now := time.Now()
 	m1 := models.Metric{
@@ -38,7 +44,7 @@ func TestStorage_Get(t *testing.T) {
 }
 
 func TestSTorage_Delete(t *testing.T) {
-	st := inmem.New()
+	st := inmem.New(logger)
 
 	now := time.Now()
 	m1 := models.Metric{
