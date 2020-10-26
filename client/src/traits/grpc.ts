@@ -43,7 +43,7 @@ export class GrpcMetricClient {
             method: 'POST',
             mode: 'no-cors'
         })
-            .catch(e => {
+            .catch(() => {
                 this.error.value = 'server is not reachable'
             });
     }
