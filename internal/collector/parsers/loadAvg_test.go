@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/balabanovds/smonitor/internal/collector/parsers"
-
 	"github.com/stretchr/testify/require"
 )
 

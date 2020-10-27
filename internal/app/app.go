@@ -2,17 +2,15 @@ package app
 
 import (
 	"context"
-	"github.com/balabanovds/smonitor/cmd/config"
-	"go.uber.org/zap"
 	"sync"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/models"
-
+	"github.com/balabanovds/smonitor/cmd/config"
 	"github.com/balabanovds/smonitor/internal/collector"
-
 	"github.com/balabanovds/smonitor/internal/collector/parsers"
 	"github.com/balabanovds/smonitor/internal/metrics"
+	"github.com/balabanovds/smonitor/internal/models"
+	"go.uber.org/zap"
 )
 
 type App struct {
@@ -58,8 +56,8 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 			case <-ctx.Done():
 				return
 			case <-tick.C:
-				// TODO thick about delete old
-				//a.storage.Delete(t.Add(-a.deleteOld))
+				// TODO think about delete old
+				// a.storage.Delete(t.Add(-a.deleteOld))
 				select {
 				case <-ctx.Done():
 					return
@@ -72,6 +70,7 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 			}
 		}
 	}()
+
 	return doneCh
 }
 
@@ -87,6 +86,7 @@ func (a *App) createChan(ctx context.Context) InMetricChan {
 		}
 		streams[i] = a.result2Metric(ctx, p.Parse(ctx))
 	}
+
 	return a.muxChannels(ctx, streams...)
 }
 
@@ -104,8 +104,10 @@ func (a *App) result2Metric(ctx context.Context, inCh <-chan collector.Result) I
 				}
 				if r.Err != nil {
 					a.log.Error("error in data", zap.Error(r.Err))
+
 					continue
 				}
+
 				select {
 				case <-ctx.Done():
 					return
@@ -114,6 +116,7 @@ func (a *App) result2Metric(ctx context.Context, inCh <-chan collector.Result) I
 			}
 		}
 	}()
+
 	return outCh
 }
 
@@ -159,5 +162,6 @@ func getParserFunc(pType models.ParserType) func() parsers.Parser {
 		return parsers.NewNETParser
 	case models.Undef:
 	}
+
 	return nil
 }

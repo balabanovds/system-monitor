@@ -17,10 +17,10 @@ func newParserInfo(ptype models.ParserType) ParserInfo {
 }
 
 func (a *App) RequestParsersInfo() []ParserInfo {
-	var list []ParserInfo
+	list := make([]ParserInfo, len(a.parserTypes))
 
-	for _, t := range a.parserTypes {
-		list = append(list, newParserInfo(t))
+	for i, t := range a.parserTypes {
+		list[i] = newParserInfo(t)
 	}
 
 	return list

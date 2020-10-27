@@ -28,7 +28,5 @@ func New(level string, production bool) (*zap.Logger, error) {
 		return nil, err
 	}
 
-	//zap.ReplaceGlobals(l)
-
 	return l, nil
 }

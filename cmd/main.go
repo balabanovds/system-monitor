@@ -3,16 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/balabanovds/smonitor/cmd/logger"
 	"log"
 	"os"
 
+	"github.com/balabanovds/smonitor/cmd/config"
+	"github.com/balabanovds/smonitor/cmd/logger"
 	"github.com/balabanovds/smonitor/internal/api"
-
 	"github.com/balabanovds/smonitor/internal/app"
 	"github.com/balabanovds/smonitor/internal/metrics/inmem"
-
-	"github.com/balabanovds/smonitor/cmd/config"
 )
 
 var configFile string

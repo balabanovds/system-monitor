@@ -45,6 +45,7 @@ func (c *Collector) execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResul
 
 		if err := cmd.Run(); err != nil {
 			stream <- ExecResult{Err: err}
+
 			return
 		}
 
@@ -69,6 +70,7 @@ func (c *Collector) parse(ctx context.Context, inStream <-chan ExecResult, parse
 					return
 				case stream <- Result{Err: i.Err}:
 				}
+
 				continue
 			}
 			metrics, err := parseFn(i.Data)
@@ -78,6 +80,7 @@ func (c *Collector) parse(ctx context.Context, inStream <-chan ExecResult, parse
 					return
 				case stream <- Result{Err: i.Err}:
 				}
+
 				continue
 			}
 

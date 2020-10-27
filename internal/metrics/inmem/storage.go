@@ -1,13 +1,12 @@
 package inmem
 
 import (
-	"go.uber.org/zap"
 	"sync"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/models"
-
 	"github.com/balabanovds/smonitor/internal/metrics"
+	"github.com/balabanovds/smonitor/internal/models"
+	"go.uber.org/zap"
 )
 
 type storage struct {
@@ -46,6 +45,7 @@ func (s *storage) Save(m models.Metric) {
 	d, ok := s.data[m.Time]
 	if !ok {
 		s.data[m.Time] = []models.Metric{m}
+
 		return
 	}
 

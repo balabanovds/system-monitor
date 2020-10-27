@@ -3,19 +3,17 @@ package api
 import (
 	"context"
 	"errors"
+
+	"github.com/balabanovds/smonitor/internal/app"
 	"github.com/balabanovds/smonitor/internal/models"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/balabanovds/smonitor/internal/app"
 )
 
-var (
-	ErrCtxDone = errors.New("exit early")
-)
+var ErrCtxDone = errors.New("exit early")
 
 type Service struct {
 	app app.App
@@ -53,7 +51,7 @@ func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
 }
 
 func (s *Service) ParsersInfo(ctx context.Context, _ *empty.Empty) (*ParsersInfoResponse, error) {
-	var list []*ParserInfo
+	list := make([]*ParserInfo, 0)
 	for _, pi := range s.app.RequestParsersInfo() {
 		select {
 		case <-ctx.Done():

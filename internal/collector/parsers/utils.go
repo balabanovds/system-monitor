@@ -15,5 +15,6 @@ func readLine(r io.Reader, lineNum int) (line string, err error) {
 			return b.Text(), nil
 		}
 	}
+
 	return line, io.EOF
 }

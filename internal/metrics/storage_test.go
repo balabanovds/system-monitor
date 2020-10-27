@@ -1,22 +1,18 @@
 package metrics_test
 
 import (
-	"go.uber.org/zap"
 	"testing"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/models"
-
 	"github.com/balabanovds/smonitor/internal/metrics/inmem"
+	"github.com/balabanovds/smonitor/internal/models"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 )
 
-var (
-	logger = zap.NewNop()
-)
+var logger = zap.NewNop()
 
 func TestStorage_Get(t *testing.T) {
-
 	st := inmem.New(logger)
 
 	now := time.Now()

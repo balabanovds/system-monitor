@@ -42,7 +42,9 @@ func GetMetricTypes(pType ParserType) []MetricType {
 	case FS:
 		return []MetricType{FSMBFree, FSInodeFree}
 	case Net:
-		// TODO complete Net parser here too
+	// TODO complete Net parser here too
+	case Undef:
 	}
+
 	return []MetricType{Undefined}
 }

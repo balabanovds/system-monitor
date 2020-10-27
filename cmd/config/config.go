@@ -1,9 +1,10 @@
 package config
 
 import (
+	"reflect"
+
 	"github.com/balabanovds/smonitor/internal/models"
 	"github.com/caarlos0/env/v6"
-	"reflect"
 )
 
 type Config struct {

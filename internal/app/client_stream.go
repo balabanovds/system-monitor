@@ -54,6 +54,7 @@ func report(list []models.Metric) []models.Metric {
 	for _, ms := range mmap {
 		result = append(result, avg(ms))
 	}
+
 	return result
 }
 

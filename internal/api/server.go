@@ -2,14 +2,13 @@ package api
 
 import (
 	"fmt"
-	"github.com/balabanovds/smonitor/cmd/config"
-	"go.uber.org/zap"
 	"net"
 	"net/http"
 
+	"github.com/balabanovds/smonitor/cmd/config"
 	"github.com/balabanovds/smonitor/internal/app"
-
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -24,6 +23,7 @@ type Server struct {
 
 func NewServer(cfg config.ServerConfig, logger *zap.Logger) *Server {
 	gs := grpc.NewServer()
+
 	return &Server{
 		cfg:         cfg,
 		Grpc:        gs,
@@ -39,6 +39,7 @@ func (s *Server) Serve(app app.App) error {
 	go s.startHTTP(errCh)
 
 	err := <-errCh
+
 	return err
 }
 
@@ -47,6 +48,7 @@ func (s *Server) startGRPC(app app.App, errCh chan<- error) {
 	lsn, err := net.Listen("tcp", addr)
 	if err != nil {
 		errCh <- err
+
 		return
 	}
 

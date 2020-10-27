@@ -25,6 +25,7 @@ func (t ParserType) Value(str string) ParserType {
 	if !ok {
 		return Undef
 	}
+
 	return v
 }
 
@@ -48,6 +49,7 @@ func (t ParserType) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBufferString(`"`)
 	buf.WriteString(t.String())
 	buf.WriteString(`"`)
+
 	return buf.Bytes(), nil
 }
 
@@ -58,5 +60,6 @@ func (t *ParserType) UnmarshalJSON(b []byte) error {
 	}
 
 	*t = toID[j]
+
 	return nil
 }

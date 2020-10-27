@@ -3,9 +3,8 @@ package parsers
 import (
 	"context"
 
-	"github.com/balabanovds/smonitor/internal/models"
-
 	"github.com/balabanovds/smonitor/internal/collector"
+	"github.com/balabanovds/smonitor/internal/models"
 )
 
 type IOParser struct {
