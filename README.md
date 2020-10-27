@@ -1,5 +1,9 @@
 # System-monitor daemon
 
+[Client README](./client/README.md)
+
+[Task](./docs/TASK.md)
+
 ## Environment
 
 ```shell script
@@ -8,7 +12,8 @@
 TICK_INTERVAL 
 
 # enabled parsers separated by ":", 
-# by default all enabled "load_avg:cpu"`
+# by default enabled 'load_avg:cpu'
+# TODO add to default 'io:fs:net' after realization
 PARSERS 
 
 # host name or IP address daemon listens to

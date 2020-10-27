@@ -1,13 +1,11 @@
 lint:
 	golangci-lint run ./...
 
-test-linux:
+test-linux-docker:
 	./scripts/go14_linux.sh test -race ./...
 
-test-darwin:
-	go test -race  ./...
-
-test: lint test-darwin test-linux
+test: lint
+	go test -race -count 100  ./...
 
 dl-client:
 	cd client && npm install && cd ..
@@ -16,7 +14,10 @@ generate: dl-client
 	protoc -I=./schema --go_out=plugins=grpc:./internal/api/ ./schema/metric_service.proto
 	cd client && ./generate.sh && ./generate_classic.sh && cd ..
 
-build: test generate
+build:
+
+
+rebuild: test generate
 	docker-compose -f ./deployments/docker-compose.yml -p smonitor up -d --build
 
 dev: test generate

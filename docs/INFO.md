@@ -31,9 +31,9 @@ CPU usage: 9.0% user, 11.20% sys, 79.80% idle
     - tps (transfers per second);
     - KB/s (kilobytes (read+write) per second);
     
-    **Linux** `iostat -d -o JSON`
+**Linux** `iostat -d -o JSON`
           
-    ```json
+```json
   {"sysstat": {
         "hosts": [
             {
@@ -56,18 +56,18 @@ CPU usage: 9.0% user, 11.20% sys, 79.80% idle
         ]
       }}
   ```
-    **Darwin** 
-    ```
+**Darwin** 
+ ```
   $ iostat
                  disk0       cpu    load average
        KB/t  tps  MB/s  us sy id   1m   5m   15m
       49.11  122  5.85  10  9 80  1.97 2.89 3.12
   ```
   
-    - CPU (%user_mode, %system_mode, %idle)
-    
-    **Linux** `iostat -c -o JSON`
-    ```json
+ - CPU (%user_mode, %system_mode, %idle)
+
+**Linux** `iostat -c -o JSON`
+```json
   {"sysstat": {
     	"hosts": [
     		{
