@@ -35,15 +35,13 @@ jobs:
       script: cd /tmp && go get "github.com/${TRAVIS_REPO_SLUG}/${BRANCH}@${BRANCH}"
     - stage: "Tests"
       name: "Linters"
-      install: go install github.com/golangci/golangci-lint/cmd/golangci-lint
-      script: golangci-lint run ./...
+      install: echo "skip"
+      script: make lint
     - stage: "Tests"
       name: "Unit tests"
       install: go mod download
-      script: go test -v -count=100 -race -gcflags=-l -timeout=30s ./...
+      script: make test
     - stage: "Tests"
-      name: "Makefile"
+      name: "Build"
       install: go mod download
-      script:
-        - make test
-        - make build
+      script: make build

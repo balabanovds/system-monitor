@@ -1,4 +1,7 @@
-lint:
+install-lint-deps:
+	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.30.0
+
+lint: install-lint-deps
 	golangci-lint run ./...
 
 test-linux-docker:
@@ -15,7 +18,7 @@ generate: dl-client
 	cd client && ./generate.sh && ./generate_classic.sh && cd ..
 
 build:
-
+	go build -o system-monitor ./cmd
 
 rebuild: test generate
 	docker-compose -f ./deployments/docker-compose.yml -p smonitor up -d --build
