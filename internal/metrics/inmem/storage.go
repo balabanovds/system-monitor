@@ -11,54 +11,70 @@ import (
 
 type storage struct {
 	mu   sync.RWMutex
-	data map[time.Time][]models.Metric
+	data []models.Metric
 	log  *zap.Logger
 }
 
 func New(logger *zap.Logger) metrics.Storage {
 	return &storage{
-		data: make(map[time.Time][]models.Metric),
+		data: make([]models.Metric, 0),
 		log:  logger,
 	}
 }
 
 func (s *storage) Get(end time.Time, duration time.Duration) []models.Metric {
-	var result []models.Metric
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
 	start := end.Add(-duration)
+	var idxStart int
+	idxEnd := len(s.data)
 
-	for k, v := range s.data {
-		if k.UTC().UnixNano() > start.UTC().UnixNano() &&
-			k.UTC().UnixNano() < end.UTC().UnixNano() {
-			result = append(result, v...)
+	for i := idxEnd - 1; i >= 0; i-- {
+		if !s.data[i].IsLessTime(end) {
+			idxEnd = i
+		}
+		idxStart = i
+		if s.data[i].IsLessTime(start) {
+			break
 		}
 	}
 
-	return result
+	return s.data[idxStart:idxEnd]
 }
 
 func (s *storage) Save(m models.Metric) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	d, ok := s.data[m.Time]
-	if !ok {
-		s.data[m.Time] = []models.Metric{m}
+	result := make([]models.Metric, 0)
 
-		return
+	var idx int
+
+	for i := len(s.data) - 1; i >= 0; i-- {
+		idx = i + 1
+		if !m.IsLess(s.data[i]) {
+			break
+		}
 	}
 
-	s.data[m.Time] = append(d, m)
+	result = append(result, s.data[:idx]...)
+	result = append(result, m)
+	result = append(result, s.data[idx:]...)
+
+	s.data = result
 }
 
 func (s *storage) Delete(till time.Time) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	for k := range s.data {
-		if k.UTC().UnixNano() < till.UTC().UnixNano() {
-			delete(s.data, k)
+	var idx int
+
+	for i := range s.data {
+		if s.data[i].IsLessTime(till) {
+			idx = i
 		}
 	}
+
+	s.data = s.data[idx:]
 }

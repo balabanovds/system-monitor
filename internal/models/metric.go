@@ -48,3 +48,24 @@ func GetMetricTypes(pType ParserType) []MetricType {
 
 	return []MetricType{Undefined}
 }
+
+func (m *Metric) IsWithinTime(start, stop time.Time) bool {
+	if start.UTC().UnixNano() > stop.UTC().UnixNano() {
+		return false
+	}
+
+	return m.Time.UTC().UnixNano() >= start.UTC().UnixNano() &&
+		m.Time.UTC().UnixNano() <= stop.UTC().UnixNano()
+}
+
+func (m *Metric) IsLessTime(t time.Time) bool {
+	return m.Time.UTC().UnixNano() < t.UTC().UnixNano()
+}
+
+func (m *Metric) IsLess(other Metric) bool {
+	if m.Time.UTC().UnixNano() == other.Time.UTC().UnixNano() {
+		return m.Type < other.Type
+	}
+
+	return m.Time.UTC().UnixNano() < other.Time.UTC().UnixNano()
+}
