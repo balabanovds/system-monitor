@@ -1,12 +1,12 @@
-package metrics_test
+package storage_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/balabanovds/system-monitor/internal/metrics"
-	"github.com/balabanovds/system-monitor/internal/metrics/inmem"
 	"github.com/balabanovds/system-monitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/storage"
+	"github.com/balabanovds/system-monitor/internal/storage/inmem"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -45,7 +45,7 @@ func TestStorage_Delete(t *testing.T) {
 	require.Len(t, mmap, 1)
 }
 
-func initStorage(t *testing.T) (metrics.Storage, time.Time) {
+func initStorage(t *testing.T) (storage.Storage, time.Time) {
 	t.Helper()
 	st := inmem.New(logger)
 

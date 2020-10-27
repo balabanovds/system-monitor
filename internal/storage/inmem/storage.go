@@ -4,25 +4,25 @@ import (
 	"sync"
 	"time"
 
-	"github.com/balabanovds/system-monitor/internal/metrics"
 	"github.com/balabanovds/system-monitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/storage"
 	"go.uber.org/zap"
 )
 
-type storage struct {
+type inMemStorage struct {
 	mu   sync.RWMutex
 	data []models.Metric
 	log  *zap.Logger
 }
 
-func New(logger *zap.Logger) metrics.Storage {
-	return &storage{
+func New(logger *zap.Logger) storage.Storage {
+	return &inMemStorage{
 		data: make([]models.Metric, 0),
 		log:  logger,
 	}
 }
 
-func (s *storage) Get(end time.Time, duration time.Duration) []models.Metric {
+func (s *inMemStorage) Get(end time.Time, duration time.Duration) []models.Metric {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -43,7 +43,7 @@ func (s *storage) Get(end time.Time, duration time.Duration) []models.Metric {
 	return s.data[idxStart:idxEnd]
 }
 
-func (s *storage) Save(m models.Metric) {
+func (s *inMemStorage) Save(m models.Metric) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	result := make([]models.Metric, 0)
@@ -64,7 +64,7 @@ func (s *storage) Save(m models.Metric) {
 	s.data = result
 }
 
-func (s *storage) Delete(till time.Time) {
+func (s *inMemStorage) Delete(till time.Time) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

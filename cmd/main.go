@@ -10,7 +10,7 @@ import (
 	"github.com/balabanovds/system-monitor/cmd/logger"
 	"github.com/balabanovds/system-monitor/internal/api"
 	"github.com/balabanovds/system-monitor/internal/app"
-	"github.com/balabanovds/system-monitor/internal/metrics/inmem"
+	"github.com/balabanovds/system-monitor/internal/storage/inmem"
 )
 
 var configFile string

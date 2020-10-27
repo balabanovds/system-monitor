@@ -8,13 +8,13 @@ import (
 	"github.com/balabanovds/system-monitor/cmd/config"
 	"github.com/balabanovds/system-monitor/internal/collector"
 	"github.com/balabanovds/system-monitor/internal/collector/parsers"
-	"github.com/balabanovds/system-monitor/internal/metrics"
 	"github.com/balabanovds/system-monitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/storage"
 	"go.uber.org/zap"
 )
 
 type App struct {
-	storage     metrics.Storage
+	storage     storage.Storage
 	parsers     []func() parsers.Parser
 	parserTypes []models.ParserType
 	interval    time.Duration
@@ -23,7 +23,7 @@ type App struct {
 
 type InMetricChan <-chan models.Metric
 
-func New(cfg config.AppConfig, storage metrics.Storage, logger *zap.Logger) *App {
+func New(cfg config.AppConfig, storage storage.Storage, logger *zap.Logger) *App {
 	var parserFuncs []func() parsers.Parser
 
 	for _, p := range cfg.Parsers {
