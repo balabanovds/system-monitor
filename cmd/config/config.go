@@ -3,7 +3,7 @@ package config
 import (
 	"reflect"
 
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/models"
 	"github.com/caarlos0/env/v6"
 )
 

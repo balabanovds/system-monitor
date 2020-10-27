@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/balabanovds/smonitor/cmd/config"
-	"github.com/balabanovds/smonitor/cmd/logger"
-	"github.com/balabanovds/smonitor/internal/api"
-	"github.com/balabanovds/smonitor/internal/app"
-	"github.com/balabanovds/smonitor/internal/metrics/inmem"
+	"github.com/balabanovds/system-monitor/cmd/config"
+	"github.com/balabanovds/system-monitor/cmd/logger"
+	"github.com/balabanovds/system-monitor/internal/api"
+	"github.com/balabanovds/system-monitor/internal/app"
+	"github.com/balabanovds/system-monitor/internal/metrics/inmem"
 )
 
 var configFile string

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/balabanovds/smonitor/internal/collector/parsers"
+	"github.com/balabanovds/system-monitor/internal/collector/parsers"
 	"github.com/stretchr/testify/require"
 )
 

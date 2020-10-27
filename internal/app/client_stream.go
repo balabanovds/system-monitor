@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/models"
 )
 
 // RequestStream each N seconds provide report for last M seconds.

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/balabanovds/smonitor/internal/collector"
+	"github.com/balabanovds/system-monitor/internal/collector"
 )
 
 func NewCPUParser() Parser {

@@ -3,7 +3,7 @@ package parsers
 import (
 	"context"
 
-	"github.com/balabanovds/smonitor/internal/collector"
+	"github.com/balabanovds/system-monitor/internal/collector"
 )
 
 type Parser interface {

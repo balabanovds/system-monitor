@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/collector"
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/collector"
+	"github.com/balabanovds/system-monitor/internal/models"
 )
 
 type LoadAvgParser struct {

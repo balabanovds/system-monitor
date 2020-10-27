@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/balabanovds/smonitor/internal/metrics/inmem"
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/metrics/inmem"
+	"github.com/balabanovds/system-monitor/internal/models"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )

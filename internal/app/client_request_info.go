@@ -1,6 +1,6 @@
 package app
 
-import "github.com/balabanovds/smonitor/internal/models"
+import "github.com/balabanovds/system-monitor/internal/models"
 
 type ParserInfo struct {
 	Type        models.ParserType

@@ -1,4 +1,4 @@
-module github.com/balabanovds/smonitor
+module github.com/balabanovds/system-monitor
 
 go 1.15
 

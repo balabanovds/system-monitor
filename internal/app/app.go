@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/balabanovds/smonitor/cmd/config"
-	"github.com/balabanovds/smonitor/internal/collector"
-	"github.com/balabanovds/smonitor/internal/collector/parsers"
-	"github.com/balabanovds/smonitor/internal/metrics"
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/cmd/config"
+	"github.com/balabanovds/system-monitor/internal/collector"
+	"github.com/balabanovds/system-monitor/internal/collector/parsers"
+	"github.com/balabanovds/system-monitor/internal/metrics"
+	"github.com/balabanovds/system-monitor/internal/models"
 	"go.uber.org/zap"
 )
 

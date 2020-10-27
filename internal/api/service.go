@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/balabanovds/smonitor/internal/app"
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/app"
+	"github.com/balabanovds/system-monitor/internal/models"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"

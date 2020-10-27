@@ -5,8 +5,8 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/balabanovds/smonitor/cmd/config"
-	"github.com/balabanovds/smonitor/internal/app"
+	"github.com/balabanovds/system-monitor/cmd/config"
+	"github.com/balabanovds/system-monitor/internal/app"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"

@@ -5,7 +5,7 @@ import (
 	"context"
 	"os/exec"
 
-	"github.com/balabanovds/smonitor/internal/models"
+	"github.com/balabanovds/system-monitor/internal/models"
 )
 
 type Collector struct {
