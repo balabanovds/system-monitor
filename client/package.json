@@ -15,7 +15,6 @@
         "core-js": "^3.6.5",
         "dayjs": "^1.9.3",
         "google-protobuf": "^3.13.0",
-        "grpc-web": "^1.2.1",
         "vue": "^3.0.0"
     },
     "devDependencies": {
