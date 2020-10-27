@@ -4,10 +4,9 @@ COPY . .
 RUN rm -rf client && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd
 
 ### second stage
-FROM alpine:3
+FROM ubuntu:18.04
 WORKDIR /app
 COPY --from=builder /app/main .
-COPY ./config .
 EXPOSE $GRPC_PORT
 EXPOSE $HTTP_PORT
-CMD [ "./main", "-json", "config.json" ]
+CMD [ "./main" ]
