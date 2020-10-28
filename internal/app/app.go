@@ -14,11 +14,12 @@ import (
 )
 
 type App struct {
-	storage     storage.Storage
-	parsers     []func() parsers.Parser
-	parserTypes []models.ParserType
-	interval    time.Duration
-	log         *zap.Logger
+	storage                storage.Storage
+	parsers                []func() parsers.Parser
+	parserTypes            []models.ParserType
+	interval               time.Duration
+	MaxMeasurementDuration time.Duration
+	log                    *zap.Logger
 }
 
 type InMetricChan <-chan models.Metric
@@ -34,11 +35,12 @@ func New(cfg config.AppConfig, storage storage.Storage, logger *zap.Logger) *App
 	}
 
 	return &App{
-		storage:     storage,
-		parsers:     parserFuncs,
-		parserTypes: cfg.Parsers,
-		interval:    time.Duration(cfg.Interval) * time.Second,
-		log:         logger,
+		storage:                storage,
+		parsers:                parserFuncs,
+		parserTypes:            cfg.Parsers,
+		interval:               time.Duration(cfg.IntervalSeconds) * time.Second,
+		MaxMeasurementDuration: time.Duration(cfg.MaxMeasurementHours) * time.Hour,
+		log:                    logger,
 	}
 }
 
@@ -55,9 +57,8 @@ func (a *App) Run(ctx context.Context) <-chan struct{} {
 			select {
 			case <-ctx.Done():
 				return
-			case <-tick.C:
-				// TODO think about delete old
-				// a.storage.Delete(t.Add(-a.deleteOld))
+			case t := <-tick.C:
+				a.storage.Delete(t.Add(-a.MaxMeasurementDuration))
 				select {
 				case <-ctx.Done():
 					return

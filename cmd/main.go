@@ -2,30 +2,15 @@ package main
 
 import (
 	"context"
-	"flag"
-	"log"
-	"os"
-
 	"github.com/balabanovds/system-monitor/cmd/config"
 	"github.com/balabanovds/system-monitor/cmd/logger"
 	"github.com/balabanovds/system-monitor/internal/api"
 	"github.com/balabanovds/system-monitor/internal/app"
 	"github.com/balabanovds/system-monitor/internal/storage/inmem"
+	"log"
 )
 
-var configFile string
-
-func init() {
-	flag.StringVar(&configFile, "json", "./config/config.json", "JSON config file")
-	flag.Parse()
-}
-
 func main() {
-	if configFile == "" {
-		flag.Usage()
-		os.Exit(1)
-	}
-
 	cfg, err := config.Parse()
 	handleErr(err)
 

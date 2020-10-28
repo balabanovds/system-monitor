@@ -14,8 +14,9 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Interval int                 `env:"TICK_INTERVAL" envDefault:"1"`
-	Parsers  []models.ParserType `env:"PARSERS" envSeparator:":" envDefault:"load_avg:cpu"`
+	IntervalSeconds     int                 `env:"TICK_INTERVAL" envDefault:"1"`
+	MaxMeasurementHours int                 `env:"MAX_MEASURE_INTERVAL" envDefault:"1"`
+	Parsers             []models.ParserType `env:"PARSERS" envSeparator:":" envDefault:"load_avg:cpu"`
 }
 
 type ServerConfig struct {
