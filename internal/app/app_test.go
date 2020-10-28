@@ -10,8 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var parsers = []models.ParserType{models.LoadAvg, models.CPU}
-
 func TestApp_RequestParsersInfo(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -22,11 +20,12 @@ func TestApp_RequestParsersInfo(t *testing.T) {
 		{
 			name:     "no parsers",
 			length:   0,
+			parsers:  []models.ParserType{},
 			expected: []app.ParserInfo{},
 		},
 		{
 			name:    "defined parsers",
-			parsers: parsers,
+			parsers: app.NewTestParsers(),
 			length:  2,
 			expected: []app.ParserInfo{
 				{
@@ -46,7 +45,7 @@ func TestApp_RequestParsersInfo(t *testing.T) {
 	for _, tst := range tests {
 		tst := tst
 		t.Run(tst.name, func(t *testing.T) {
-			a := app.NewTestApp(t)
+			a := app.NewTestApp(t, tst.parsers)
 			infoList := a.RequestParsersInfo()
 			require.Len(t, infoList, tst.length)
 			require.Equal(t, tst.expected, infoList)
@@ -55,7 +54,7 @@ func TestApp_RequestParsersInfo(t *testing.T) {
 }
 
 func TestApp_RequestStream(t *testing.T) {
-	a := app.NewTestApp(t)
+	a := app.NewTestApp(t, app.NewTestParsers())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

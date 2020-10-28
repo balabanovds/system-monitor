@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/balabanovds/system-monitor/cmd/config"
 	"github.com/balabanovds/system-monitor/cmd/logger"
 	"github.com/balabanovds/system-monitor/internal/api"
 	"github.com/balabanovds/system-monitor/internal/app"
 	"github.com/balabanovds/system-monitor/internal/storage/inmem"
-	"log"
 )
 
 func main() {

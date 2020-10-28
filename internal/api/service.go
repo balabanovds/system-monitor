@@ -35,7 +35,7 @@ func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
 	}
 
 	if time.Duration(req.GetM())*time.Second > s.app.MaxMeasurementDuration {
-		return status.Error(codes.InvalidArgument,
+		return status.Error(codes.OutOfRange,
 			fmt.Sprintf("argument M is greater max value %f hours", s.app.MaxMeasurementDuration.Hours()))
 	}
 
