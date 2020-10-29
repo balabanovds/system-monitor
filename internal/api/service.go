@@ -34,9 +34,9 @@ func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
 		return status.Error(codes.InvalidArgument, "both arguments should be positive")
 	}
 
-	if time.Duration(req.GetM())*time.Second > s.app.MaxMeasurementDuration {
+	if time.Duration(req.GetM())*time.Second > s.app.GetMacMeasurementsDuration() {
 		return status.Error(codes.OutOfRange,
-			fmt.Sprintf("argument M is greater max value %f hours", s.app.MaxMeasurementDuration.Hours()))
+			fmt.Sprintf("argument M is greater max value %f hours", s.app.GetMacMeasurementsDuration().Hours()))
 	}
 
 	s.log.Info("grpc service: new consumer",

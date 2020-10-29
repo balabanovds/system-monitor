@@ -8,6 +8,9 @@ package api
 
 import (
 	context "context"
+	reflect "reflect"
+	sync "sync"
+
 	empty "github.com/golang/protobuf/ptypes/empty"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	grpc "google.golang.org/grpc"
@@ -15,8 +18,6 @@ import (
 	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -482,18 +483,21 @@ func file_metric_service_proto_rawDescGZIP() []byte {
 	return file_metric_service_proto_rawDescData
 }
 
-var file_metric_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_metric_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_metric_service_proto_goTypes = []interface{}{
-	(MetricType)(0),             // 0: metric.MetricType
-	(ParserType)(0),             // 1: metric.ParserType
-	(*Metric)(nil),              // 2: metric.Metric
-	(*Request)(nil),             // 3: metric.Request
-	(*ParsersInfoResponse)(nil), // 4: metric.ParsersInfoResponse
-	(*ParserInfo)(nil),          // 5: metric.ParserInfo
-	(*timestamp.Timestamp)(nil), // 6: google.protobuf.Timestamp
-	(*empty.Empty)(nil),         // 7: google.protobuf.Empty
-}
+var (
+	file_metric_service_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+	file_metric_service_proto_msgTypes  = make([]protoimpl.MessageInfo, 4)
+	file_metric_service_proto_goTypes   = []interface{}{
+		(MetricType)(0),             // 0: metric.MetricType
+		(ParserType)(0),             // 1: metric.ParserType
+		(*Metric)(nil),              // 2: metric.Metric
+		(*Request)(nil),             // 3: metric.Request
+		(*ParsersInfoResponse)(nil), // 4: metric.ParsersInfoResponse
+		(*ParserInfo)(nil),          // 5: metric.ParserInfo
+		(*timestamp.Timestamp)(nil), // 6: google.protobuf.Timestamp
+		(*empty.Empty)(nil),         // 7: google.protobuf.Empty
+	}
+)
+
 var file_metric_service_proto_depIdxs = []int32{
 	6, // 0: metric.Metric.Time:type_name -> google.protobuf.Timestamp
 	0, // 1: metric.Metric.Type:type_name -> metric.MetricType
@@ -588,8 +592,10 @@ func file_metric_service_proto_init() {
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConnInterface
+var (
+	_ context.Context
+	_ grpc.ClientConnInterface
+)
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
@@ -665,6 +671,7 @@ type UnimplementedMetricsServer struct {
 func (*UnimplementedMetricsServer) GetStream(*Request, Metrics_GetStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetStream not implemented")
 }
+
 func (*UnimplementedMetricsServer) ParsersInfo(context.Context, *empty.Empty) (*ParsersInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParsersInfo not implemented")
 }

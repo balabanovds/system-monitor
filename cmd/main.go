@@ -26,7 +26,7 @@ func main() {
 	a := app.New(cfg.App, inmem.New(zapLogger), zapLogger)
 
 	go func() {
-		log.Fatalln(srv.Serve(*a))
+		log.Fatalln(srv.Serve(a))
 	}()
 	<-a.Run(ctx)
 }

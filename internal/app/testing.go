@@ -13,7 +13,7 @@ func NewTestParsers() []models.ParserType {
 	return []models.ParserType{models.LoadAvg, models.CPU}
 }
 
-func NewTestApp(t *testing.T, parsers []models.ParserType) *App {
+func NewTestApp(t *testing.T, parsers []models.ParserType) App {
 	t.Helper()
 
 	cfg := config.AppConfig{

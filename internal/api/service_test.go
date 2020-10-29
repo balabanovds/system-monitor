@@ -119,7 +119,7 @@ func TestService_GetStream(t *testing.T) {
 	}
 }
 
-func prepareClient(ctx context.Context, t *testing.T) (client api.MetricsClient, appl *app.App, cleanUp func()) {
+func prepareClient(ctx context.Context, t *testing.T) (client api.MetricsClient, appl app.App, cleanUp func()) {
 	appl = app.NewTestApp(t, app.NewTestParsers())
 
 	conn, err := grpc.DialContext(
@@ -136,13 +136,13 @@ func prepareClient(ctx context.Context, t *testing.T) (client api.MetricsClient,
 	}
 }
 
-func dialer(t *testing.T, a *app.App) func(context.Context, string) (net.Conn, error) {
+func dialer(t *testing.T, a app.App) func(context.Context, string) (net.Conn, error) {
 	lsn := bufconn.Listen(1024 * 1024)
 	srv := grpc.NewServer()
 
 	api.RegisterMetricsServer(
 		srv,
-		api.NewService(*a, zap.NewNop()),
+		api.NewService(a, zap.NewNop()),
 	)
 
 	go func() {
