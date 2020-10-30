@@ -1,4 +1,4 @@
-package collector
+package parsers
 
 import (
 	"bytes"
@@ -7,10 +7,6 @@ import (
 
 	"github.com/balabanovds/system-monitor/internal/models"
 )
-
-type Collector struct {
-	cmd *exec.Cmd
-}
 
 type Result struct {
 	Data models.Metric
@@ -22,20 +18,7 @@ type ExecResult struct {
 	Err  error
 }
 
-type ParseFn func(data []byte) ([]models.Metric, error)
-
-func New(command string) *Collector {
-	return &Collector{
-		cmd: exec.Command("/bin/sh", "-c", command),
-	}
-}
-
-// pipeline pattern.
-func (c *Collector) Run(ctx context.Context, parseFn ParseFn) <-chan Result {
-	return c.parse(ctx, c.execCmd(ctx, c.cmd), parseFn)
-}
-
-func (c *Collector) execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
+func execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 	stream := make(chan ExecResult)
 	go func() {
 		defer close(stream)
@@ -59,7 +42,7 @@ func (c *Collector) execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResul
 	return stream
 }
 
-func (c *Collector) parse(ctx context.Context, inStream <-chan ExecResult, parseFn ParseFn) <-chan Result {
+func parseExecResult(ctx context.Context, inStream <-chan ExecResult, parseFn ParserFunc) <-chan Result {
 	stream := make(chan Result)
 	go func() {
 		defer close(stream)

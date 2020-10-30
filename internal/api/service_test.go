@@ -26,24 +26,24 @@ var tests = []struct {
 	isErr   bool
 	length  int
 }{
-	{
-		name: "enter zero values",
-		req: &api.Request{
-			N: 0,
-			M: 0,
-		},
-		isErr:   true,
-		expCode: codes.InvalidArgument,
-	},
-	{
-		name: "M is exceeded 1 hour",
-		req: &api.Request{
-			N: 2,
-			M: 3601,
-		},
-		isErr:   true,
-		expCode: codes.OutOfRange,
-	},
+	//{
+	//	name: "enter zero values",
+	//	req: &api.Request{
+	//		N: 0,
+	//		M: 0,
+	//	},
+	//	isErr:   true,
+	//	expCode: codes.InvalidArgument,
+	//},
+	//{
+	//	name: "M is exceeded 1 hour",
+	//	req: &api.Request{
+	//		N: 2,
+	//		M: 3601,
+	//	},
+	//	isErr:   true,
+	//	expCode: codes.OutOfRange,
+	//},
 	{
 		name: "should receive 18 metrics",
 		req: &api.Request{

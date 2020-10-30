@@ -1,36 +1,16 @@
-package parsers
+package loadavg
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/balabanovds/system-monitor/internal/collector"
 	"github.com/balabanovds/system-monitor/internal/models"
 )
 
-type LoadAvgParser struct {
-	col *collector.Collector
-}
-
-func NewLoadAvgParser() Parser {
-	return &LoadAvgParser{
-		col: collector.New("uptime"),
-	}
-}
-
-func (p *LoadAvgParser) String() string {
-	return "load_average"
-}
-
-func (p *LoadAvgParser) Parse(ctx context.Context) <-chan collector.Result {
-	return p.col.Run(ctx, p.parseFn)
-}
-
-func (p *LoadAvgParser) parseFn(data []byte) ([]models.Metric, error) {
+func ParserFunc(data []byte) ([]models.Metric, error) {
 	now := time.Now()
-	fields := p.parse(string(data))
+	fields := parse(string(data))
 
 	ffields := make([]float64, 0)
 	for _, f := range fields {

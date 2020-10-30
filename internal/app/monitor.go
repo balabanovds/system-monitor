@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/balabanovds/system-monitor/cmd/config"
-	"github.com/balabanovds/system-monitor/internal/collector"
 	"github.com/balabanovds/system-monitor/internal/collector/parsers"
 	"github.com/balabanovds/system-monitor/internal/models"
 	"github.com/balabanovds/system-monitor/internal/storage"
@@ -14,8 +13,8 @@ import (
 )
 
 type Monitor struct {
+	sync.Mutex
 	storage                storage.Storage
-	parsers                []func() parsers.Parser
 	parserTypes            []models.ParserType
 	interval               time.Duration
 	maxMeasurementDuration time.Duration
@@ -23,18 +22,8 @@ type Monitor struct {
 }
 
 func New(cfg config.AppConfig, storage storage.Storage, logger *zap.Logger) App {
-	var parserFuncs []func() parsers.Parser
-
-	for _, p := range cfg.Parsers {
-		pr := getParserFunc(p)
-		if pr != nil {
-			parserFuncs = append(parserFuncs, pr)
-		}
-	}
-
 	return &Monitor{
 		storage:                storage,
-		parsers:                parserFuncs,
 		parserTypes:            cfg.Parsers,
 		interval:               time.Duration(cfg.IntervalSeconds) * time.Second,
 		maxMeasurementDuration: time.Duration(cfg.MaxMeasurementHours) * time.Hour,
@@ -63,7 +52,14 @@ func (a *Monitor) Run(ctx context.Context) <-chan struct{} {
 				default:
 				}
 
-				for m := range a.createChan(ctx) {
+				metricCh, err := a.createChan(ctx, a.parserTypes)
+				if err != nil {
+					a.log.Error("create channel failed", zap.Error(err))
+
+					return
+				}
+
+				for m := range metricCh {
 					a.storage.Save(m)
 				}
 			}
@@ -78,10 +74,20 @@ func (a *Monitor) GetMacMeasurementsDuration() time.Duration {
 }
 
 // fan-out - fan-in pattern.
-func (a *Monitor) createChan(ctx context.Context) InMetricChan {
-	streams := make([]InMetricChan, len(a.parsers))
-	for i, parFn := range a.parsers {
-		p := parFn()
+func (a *Monitor) createChan(ctx context.Context, parserTypes []models.ParserType) (InMetricChan, error) {
+	parserSlice := make([]parsers.Parser, 0)
+
+	for _, p := range parserTypes {
+		pr, err := parsers.New(p)
+		if err != nil {
+			return nil, err
+		}
+		parserSlice = append(parserSlice, pr)
+	}
+
+	streams := make([]InMetricChan, len(parserSlice))
+
+	for i, p := range parserSlice {
 		select {
 		case <-ctx.Done():
 			break
@@ -90,10 +96,10 @@ func (a *Monitor) createChan(ctx context.Context) InMetricChan {
 		streams[i] = a.result2Metric(ctx, p.Parse(ctx))
 	}
 
-	return a.muxChannels(ctx, streams...)
+	return a.muxChannels(ctx, streams...), nil
 }
 
-func (a *Monitor) result2Metric(ctx context.Context, inCh <-chan collector.Result) InMetricChan {
+func (a *Monitor) result2Metric(ctx context.Context, inCh <-chan parsers.Result) InMetricChan {
 	outCh := make(chan models.Metric)
 	go func() {
 		defer close(outCh)
@@ -149,22 +155,4 @@ func (a *Monitor) muxChannels(ctx context.Context, streams ...InMetricChan) InMe
 	}()
 
 	return outCh
-}
-
-func getParserFunc(pType models.ParserType) func() parsers.Parser {
-	switch pType {
-	case models.LoadAvg:
-		return parsers.NewLoadAvgParser
-	case models.CPU:
-		return parsers.NewCPUParser
-	case models.IO:
-		return parsers.NewIOParser
-	case models.FS:
-		return parsers.NewFSParser
-	case models.Net:
-		return parsers.NewNETParser
-	case models.Undef:
-	}
-
-	return nil
 }

@@ -35,6 +35,7 @@ var toString = map[ParserType]string{
 	IO:      "io",
 	FS:      "fs",
 	Net:     "net",
+	Undef:   "undefined",
 }
 
 var toID = map[string]ParserType{

@@ -1,23 +1,17 @@
-package parsers
+package cpu
 
 import (
 	"bytes"
 	"strings"
 
-	"github.com/balabanovds/system-monitor/internal/collector"
+	"github.com/balabanovds/system-monitor/pkg/utils"
 )
 
-func NewCPUParser() Parser {
-	return &CPUParser{
-		col: collector.New(`top -l 2 -n 0 | egrep '^CPU usage'`),
-	}
-}
-
-func (p *CPUParser) parse(data []byte) ([]string, error) {
+func parse(data []byte) ([]string, error) {
 	// expected two lines, should take second
 	// CPU usage: 9.0% user, 11.20% sys, 79.80% idle
 	// CPU usage: 9.0% user, 11.20% sys, 79.80% idle
-	line, err := readLine(bytes.NewReader(data), 2)
+	line, err := utils.ReadLine(bytes.NewReader(data), 2)
 	if err != nil {
 		return nil, err
 	}

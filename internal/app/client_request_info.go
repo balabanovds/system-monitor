@@ -1,6 +1,8 @@
 package app
 
-import "github.com/balabanovds/system-monitor/internal/models"
+import (
+	"github.com/balabanovds/system-monitor/internal/models"
+)
 
 func newParserInfo(ptype models.ParserType) ParserInfo {
 	return ParserInfo{
