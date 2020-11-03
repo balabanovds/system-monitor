@@ -11,7 +11,7 @@ type Command interface {
 	Get(pType models.ParserType) (*exec.Cmd, error)
 }
 
-var ErrCommandNotFound = errors.New("command not found")
+var ErrCommandNotImplemented = errors.New("command not implemented in code yet")
 
 type commander struct {
 	data map[models.ParserType]string
@@ -20,7 +20,7 @@ type commander struct {
 func (c *commander) Get(pType models.ParserType) (*exec.Cmd, error) {
 	cmdStr, ok := c.data[pType]
 	if !ok {
-		return nil, ErrCommandNotFound
+		return nil, ErrCommandNotImplemented
 	}
 
 	return exec.Command("/bin/sh", "-c", cmdStr), nil

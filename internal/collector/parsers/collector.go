@@ -1,4 +1,4 @@
-package parsers
+package parser
 
 import (
 	"bytes"
@@ -27,7 +27,7 @@ func execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 		cmd.Stdout = &out
 
 		if err := cmd.Run(); err != nil {
-			stream <- ExecResult{Err: err}
+			stream <- ExecResult{Err: ErrFailedRunCommand}
 
 			return
 		}
@@ -42,7 +42,7 @@ func execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 	return stream
 }
 
-func parseExecResult(ctx context.Context, inStream <-chan ExecResult, parseFn ParserFunc) <-chan Result {
+func parseExecResult(ctx context.Context, inStream <-chan ExecResult, parseFn Func) <-chan Result {
 	stream := make(chan Result)
 	go func() {
 		defer close(stream)

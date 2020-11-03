@@ -7,8 +7,9 @@ import (
 func New() Command {
 	return &commander{
 		data: map[models.ParserType]string{
-			models.LoadAvg: "uptime",
+			models.LoadAvg: `uptime`,
 			models.CPU:     `top -i -b -n1 | egrep '^%Cpu'`,
+			models.IO:      `iostat -d -c -o JSON`,
 		},
 	}
 }

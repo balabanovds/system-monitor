@@ -1,6 +1,6 @@
 # что необходимо собирать
 
-- Средняя загрузка системы (load average).
+### Средняя загрузка системы (load average).
 
 **Linux**
 ```
@@ -14,7 +14,7 @@ $ uptime
 11:25  up 5 days, 12:27, 3 users, load averages: 2.19 2.65 2.99
 ```
 
-- Средняя загрузка CPU (%user_mode, %system_mode, %idle)
+### Средняя загрузка CPU (%user_mode, %system_mode, %idle)
 
 **Linux**
 ```
@@ -26,35 +26,38 @@ $ uptime
 $ top -l 2 -n 0 | egrep '^CPU usage' | tail -n1
 CPU usage: 9.0% user, 11.20% sys, 79.80% idle
 ```
-- Загрузка дисков:
+### Загрузка дисков:
 
     - tps (transfers per second);
     - KB/s (kilobytes (read+write) per second);
+    - CPU (%user_mode, %system_mode, %idle)
     
-**Linux** `iostat -d -o JSON`
+**Linux** `iostat -d -c -o JSON`
           
 ```json
-  {"sysstat": {
-        "hosts": [
-            {
-                "nodename": "web-coder.dev",
-                "sysname": "Linux",
-                "release": "4.15.0-112-generic",
-                "machine": "x86_64",
-                "number-of-cpus": 1,
-                "date": "10/02/2020",
-                "statistics": [
-                    {
-                        "disk": [
-                            {"disk_device": "loop0", "tps": 0.00, "kB_read/s": 0.00, "kB_wrtn/s": 0.00, "kB_read": 1, "kB_wrtn": 0},
-                            {"disk_device": "sda", "tps": 0.42, "kB_read/s": 1.49, "kB_wrtn/s": 11.54, "kB_read": 6723037, "kB_wrtn": 51952924},
-                            {"disk_device": "sdb", "tps": 0.00, "kB_read/s": 0.00, "kB_wrtn/s": 0.01, "kB_read": 4224, "kB_wrtn": 27748}
-                        ]
-                    }
-                ]
-            }
-        ]
-      }}
+ {"sysstat": {
+ 	"hosts": [
+ 		{
+ 			"nodename": "BDT233",
+ 			"sysname": "Linux",
+ 			"release": "5.4.0-52-generic",
+ 			"machine": "x86_64",
+ 			"number-of-cpus": 8,
+ 			"date": "30.10.2020",
+ 			"statistics": [
+ 				{
+ 					"avg-cpu":  {"user": 10.67, "nice": 0.00, "system": 5.02, "iowait": 0.26, "steal": 0.00, "idle": 84.05},
+ 					"disk": [
+ 						{"disk_device": "loop0", "tps": 0.00, "kB_read/s": 0.00, "kB_wrtn/s": 0.00, "kB_read": 44, "kB_wrtn": 0},
+ 						{"disk_device": "loop7", "tps": 0.00, "kB_read/s": 0.00, "kB_wrtn/s": 0.00, "kB_read": 46, "kB_wrtn": 0},
+ 						{"disk_device": "nvme0n1", "tps": 213.21, "kB_read/s": 68.44, "kB_wrtn/s": 1832.81, "kB_read": 5958762, "kB_wrtn": 159566317}
+ 					]
+ 				}
+ 			]
+ 		}
+ 	]
+ }}
+
   ```
 **Darwin** 
  ```
@@ -64,37 +67,8 @@ CPU usage: 9.0% user, 11.20% sys, 79.80% idle
       49.11  122  5.85  10  9 80  1.97 2.89 3.12
   ```
   
- - CPU (%user_mode, %system_mode, %idle)
 
-**Linux** `iostat -c -o JSON`
-```json
-  {"sysstat": {
-    	"hosts": [
-    		{
-    			"nodename": "web-coder.dev",
-    			"sysname": "Linux",
-    			"release": "4.15.0-112-generic",
-    			"machine": "x86_64",
-    			"number-of-cpus": 1,
-    			"date": "10/02/2020",
-    			"statistics": [
-    				{
-    					"avg-cpu":  {
-                            "user": 0.25, 
-                            "nice": 0.00, 
-                            "system": 0.11, 
-                            "iowait": 0.00, 
-                            "steal": 0.00, 
-                            "idle": 99.63
-                         }
-    				}
-    			]
-    		}
-    	]
-    }}
-  ```
-
-- Информация о дисках по каждой файловой системе:
+### Информация о дисках по каждой файловой системе:
 
     - использовано мегабайт, % от доступного количества;
 

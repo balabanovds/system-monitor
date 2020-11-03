@@ -1,4 +1,4 @@
-package parsers
+package parser
 
 import (
 	"context"
@@ -15,18 +15,22 @@ import (
 	"github.com/balabanovds/system-monitor/internal/models"
 )
 
-var ErrorParserNotFound = errors.New("parser not found")
+var (
+	ErrParserNotFound   = errors.New("parser not found")
+	ErrFailedRunCommand = errors.New("failed to start command")
+)
 
 type Parser interface {
 	Parse(ctx context.Context) <-chan Result
 	Type() models.ParserType
+	Error() error
 }
 
-type ParserFunc func([]byte) ([]models.Metric, error)
+type Func func([]byte) ([]models.Metric, error)
 
 type parser struct {
 	pType models.ParserType
-	pFunc ParserFunc
+	pFunc Func
 	cmd   *exec.Cmd
 }
 
@@ -37,7 +41,7 @@ func New(t models.ParserType) (Parser, error) {
 	}
 	pFunc := getParserFunc(t)
 	if pFunc == nil {
-		return nil, ErrorParserNotFound
+		return nil, ErrParserNotFound
 	}
 
 	return &parser{
@@ -56,7 +60,11 @@ func (p *parser) Type() models.ParserType {
 	return p.pType
 }
 
-func getParserFunc(t models.ParserType) ParserFunc {
+func (p *parser) Error() error {
+	return getError(p.pType)
+}
+
+func getParserFunc(t models.ParserType) Func {
 	switch t {
 	case models.LoadAvg:
 		return pavg.ParserFunc
@@ -68,6 +76,26 @@ func getParserFunc(t models.ParserType) ParserFunc {
 		return pfs.ParserFunc
 	case models.Net:
 		return pnet.ParserFunc
+	case models.Undef:
+	}
+
+	return nil
+}
+
+func getError(t models.ParserType) error {
+	switch t {
+	case models.LoadAvg:
+		return errors.New(`load_avg failed to run: pls consider if 'uptime' is installed on OS`)
+	case models.CPU:
+		return errors.New(`cpu failed to run: pls consider if 'top' is installed on OS`)
+	case models.IO:
+		return errors.New(`io failed to run: pls consider if 'iostat' is installed on OS`)
+	case models.FS:
+		// TODO fill
+		return errors.New(`TBD`)
+	case models.Net:
+		// TODO fill
+		return errors.New(`TBD`)
 	case models.Undef:
 	}
 
