@@ -11,13 +11,7 @@ type App interface {
 	Run(ctx context.Context) <-chan struct{}
 	RequestParsersInfo() []ParserInfo
 	RequestStream(ctx context.Context, n, m int) InMetricChan
-	GetMacMeasurementsDuration() time.Duration
+	GetMaxMeasurementsDuration() time.Duration
 }
 
 type InMetricChan <-chan models.Metric
-
-type ParserInfo struct {
-	Type        models.ParserType
-	Name        string
-	MetricTypes []models.MetricType
-}
