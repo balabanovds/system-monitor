@@ -53,7 +53,7 @@ func New(t models.ParserType) (Parser, error) {
 
 // pipeline pattern.
 func (p *parser) Parse(ctx context.Context) <-chan Result {
-	return parseExecResult(ctx, execCmd(ctx, p.cmd), p.pFunc)
+	return parseExecResult(ctx, p.execCmd(ctx, p.cmd), p.pFunc)
 }
 
 func (p *parser) Type() models.ParserType {

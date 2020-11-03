@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/balabanovds/system-monitor/cmd/config"
-	"github.com/balabanovds/system-monitor/internal/collector/parsers"
+	parser "github.com/balabanovds/system-monitor/internal/collector/parsers"
 	"github.com/balabanovds/system-monitor/internal/models"
 	"github.com/balabanovds/system-monitor/internal/storage"
 	"go.uber.org/zap"
@@ -69,16 +69,16 @@ func (a *Monitor) Run(ctx context.Context) <-chan struct{} {
 	return doneCh
 }
 
-func (a *Monitor) GetMacMeasurementsDuration() time.Duration {
+func (a *Monitor) GetMaxMeasurementsDuration() time.Duration {
 	return a.maxMeasurementDuration
 }
 
 // fan-out - fan-in pattern.
 func (a *Monitor) createChan(ctx context.Context, parserTypes []models.ParserType) (InMetricChan, error) {
-	parserSlice := make([]parsers.Parser, 0)
+	parserSlice := make([]parser.Parser, 0)
 
 	for _, p := range parserTypes {
-		pr, err := parsers.New(p)
+		pr, err := parser.New(p)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +99,7 @@ func (a *Monitor) createChan(ctx context.Context, parserTypes []models.ParserTyp
 	return a.muxChannels(ctx, streams...), nil
 }
 
-func (a *Monitor) result2Metric(ctx context.Context, inCh <-chan parsers.Result) InMetricChan {
+func (a *Monitor) result2Metric(ctx context.Context, inCh <-chan parser.Result) InMetricChan {
 	outCh := make(chan models.Metric)
 	go func() {
 		defer close(outCh)

@@ -3,6 +3,7 @@ package parser
 import (
 	"bytes"
 	"context"
+	"log"
 	"os/exec"
 
 	"github.com/balabanovds/system-monitor/internal/models"
@@ -18,7 +19,7 @@ type ExecResult struct {
 	Err  error
 }
 
-func execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
+func (p *parser) execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 	stream := make(chan ExecResult)
 	go func() {
 		defer close(stream)
@@ -27,9 +28,7 @@ func execCmd(ctx context.Context, cmd *exec.Cmd) <-chan ExecResult {
 		cmd.Stdout = &out
 
 		if err := cmd.Run(); err != nil {
-			stream <- ExecResult{Err: ErrFailedRunCommand}
-
-			return
+			log.Fatalln(p.Error())
 		}
 
 		select {
