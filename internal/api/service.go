@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/balabanovds/system-monitor/internal/app"
 	"github.com/balabanovds/system-monitor/internal/models"
@@ -30,6 +32,11 @@ func NewService(app app.App, logger *zap.Logger) *Service {
 func (s *Service) GetStream(req *Request, srv Metrics_GetStreamServer) error {
 	if req.GetN() <= 0 || req.GetM() <= 0 {
 		return status.Error(codes.InvalidArgument, "both arguments should be positive")
+	}
+
+	if time.Duration(req.GetM())*time.Second > s.app.GetMaxMeasurementsDuration() {
+		return status.Error(codes.OutOfRange,
+			fmt.Sprintf("argument M is greater max value %f hours", s.app.GetMaxMeasurementsDuration().Hours()))
 	}
 
 	s.log.Info("grpc service: new consumer",

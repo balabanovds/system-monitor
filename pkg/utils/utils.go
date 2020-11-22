@@ -1,11 +1,11 @@
-package parsers
+package utils
 
 import (
 	"bufio"
 	"io"
 )
 
-func readLine(r io.Reader, lineNum int) (line string, err error) {
+func ReadLine(r io.Reader, lineNum int) (line string, err error) {
 	b := bufio.NewScanner(r)
 	var currentLine int
 

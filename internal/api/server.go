@@ -14,25 +14,25 @@ import (
 
 //go:generate protoc -I=../schema --go_out=plugins=grpc:. ../schema/metric_service.proto
 
-type Server struct {
+type server struct {
 	cfg         config.ServerConfig
-	Grpc        *grpc.Server
-	WrappedGrpc *grpcweb.WrappedGrpcServer
+	serverGrpc  *grpc.Server
+	wrappedGrpc *grpcweb.WrappedGrpcServer
 	log         *zap.Logger
 }
 
-func NewServer(cfg config.ServerConfig, logger *zap.Logger) *Server {
+func NewServer(cfg config.ServerConfig, logger *zap.Logger) API {
 	gs := grpc.NewServer()
 
-	return &Server{
+	return &server{
 		cfg:         cfg,
-		Grpc:        gs,
-		WrappedGrpc: grpcweb.WrapServer(gs),
+		serverGrpc:  gs,
+		wrappedGrpc: grpcweb.WrapServer(gs),
 		log:         logger,
 	}
 }
 
-func (s *Server) Serve(app app.App) error {
+func (s *server) Serve(app app.App) error {
 	errCh := make(chan error)
 
 	go s.startGRPC(app, errCh)
@@ -43,7 +43,11 @@ func (s *Server) Serve(app app.App) error {
 	return err
 }
 
-func (s *Server) startGRPC(app app.App, errCh chan<- error) {
+func (s *server) Stop() {
+	s.serverGrpc.Stop()
+}
+
+func (s *server) startGRPC(app app.App, errCh chan<- error) {
 	addr := fmt.Sprintf("%s:%d", s.cfg.Host, s.cfg.GRPCPort)
 	lsn, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -53,18 +57,18 @@ func (s *Server) startGRPC(app app.App, errCh chan<- error) {
 	}
 
 	service := NewService(app, s.log)
-	RegisterMetricsServer(s.Grpc, service)
+	RegisterMetricsServer(s.serverGrpc, service)
 
 	s.log.Info("grpc server listening",
 		zap.String("address", addr))
-	errCh <- s.Grpc.Serve(lsn)
+	errCh <- s.serverGrpc.Serve(lsn)
 }
 
-func (s *Server) startHTTP(errCh chan<- error) {
+func (s *server) startHTTP(errCh chan<- error) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		allowCors(w)
-		if s.WrappedGrpc.IsGrpcWebRequest(r) || s.WrappedGrpc.IsAcceptableGrpcCorsRequest(r) {
-			s.WrappedGrpc.ServeHTTP(w, r)
+		if s.wrappedGrpc.IsGrpcWebRequest(r) || s.wrappedGrpc.IsAcceptableGrpcCorsRequest(r) {
+			s.wrappedGrpc.ServeHTTP(w, r)
 		}
 	})
 

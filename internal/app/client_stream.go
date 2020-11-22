@@ -9,7 +9,7 @@ import (
 )
 
 // RequestStream each N seconds provide report for last M seconds.
-func (a *App) RequestStream(ctx context.Context, n, m int) InMetricChan {
+func (a *Monitor) RequestStream(ctx context.Context, n, m int) InMetricChan {
 	outCh := make(chan models.Metric)
 
 	if n < m {

@@ -11,6 +11,10 @@
 # each tick daemon will run all enabled parsers
 TICK_INTERVAL 
 
+# maximum measure interval in hours, older metrics will be purged
+# default is 1 hour
+MAX_MEASURE_INTERVAL
+
 # enabled parsers separated by ":", 
 # by default enabled 'load_avg:cpu'
 # TODO add to default 'io:fs:net' after realization

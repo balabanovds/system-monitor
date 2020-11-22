@@ -1,10 +1,10 @@
-package parsers
+package loadavg
 
 import (
 	"strings"
 )
 
-func (p *LoadAvgParser) parse(str string) []string {
+func parse(str string) []string {
 	spl := strings.Split(str, "load averages:")
 	fields := strings.Fields(spl[1])
 

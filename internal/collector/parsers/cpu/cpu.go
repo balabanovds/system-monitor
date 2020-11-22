@@ -1,26 +1,16 @@
-package parsers
+package cpu
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/balabanovds/system-monitor/internal/collector"
 	"github.com/balabanovds/system-monitor/internal/models"
 )
 
-type CPUParser struct {
-	col *collector.Collector
-}
-
-func (p *CPUParser) Parse(ctx context.Context) <-chan collector.Result {
-	return p.col.Run(ctx, p.parseFn)
-}
-
-func (p *CPUParser) parseFn(data []byte) ([]models.Metric, error) {
+func ParserFunc(data []byte) ([]models.Metric, error) {
 	now := time.Now()
-	fields, err := p.parse(data)
+	fields, err := parse(data)
 	if err != nil {
 		return nil, err
 	}
